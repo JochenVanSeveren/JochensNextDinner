@@ -1,5 +1,6 @@
 package be.hogent.jochensnextdinner.data
 
+import android.util.Log
 import be.hogent.jochensnextdinner.BuildConfig
 import be.hogent.jochensnextdinner.network.CantEatService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -7,15 +8,20 @@ import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.Response
+import retrofit2.Call
+import retrofit2.CallAdapter
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
+import java.lang.reflect.Type
+import okhttp3.Response as http3Response
 
 interface AppContainer {
     val jochensNextDinnerRepository: JochensNextDinnerRepository
 }
 
 class ApiKeyInterceptor(private val apiKey: String) : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
+    override fun intercept(chain: Interceptor.Chain): http3Response {
         val originalRequest = chain.request()
         val newRequest = originalRequest.newBuilder()
             .header("x-api-key", apiKey)
@@ -35,13 +41,83 @@ class DefaultAppContainer : AppContainer {
     private val retrofit: Retrofit = Retrofit.Builder()
         .client(okHttpClient)
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+//        API sometimes returns 500 error, so I needed a reply method
+        .addCallAdapterFactory(RetryCallAdapterFactory())
         .baseUrl(baseUrl)
         .build()
+
     private val retrofitService: CantEatService by lazy {
         retrofit.create(CantEatService::class.java)
     }
 
     override val jochensNextDinnerRepository: JochensNextDinnerRepository by lazy {
         NetworkJochensNextDinnerRepository(retrofitService)
+    }
+}
+
+class RetryCallAdapterFactory : CallAdapter.Factory() {
+    override fun get(
+        returnType: Type,
+        annotations: Array<Annotation>,
+        retrofit: Retrofit
+    ): CallAdapter<*, *>? {
+        if (Call::class.java != getRawType(returnType)) {
+            return null
+        }
+        val delegate = retrofit.nextCallAdapter(this, returnType, annotations)
+        return RetryCallAdapter(delegate)
+    }
+}
+
+class RetryCallAdapter<R>(
+    private val delegate: CallAdapter<R, *>
+) : CallAdapter<R, Any> {
+
+    override fun responseType(): Type {
+        return delegate.responseType()
+    }
+
+    override fun adapt(call: Call<R>): Any {
+        return when (val adaptedCall = delegate.adapt(call)) {
+            is Call<*> -> RetryCall(adaptedCall)
+            else -> adaptedCall
+        }
+    }
+}
+
+class RetryCall<R>(
+    private val delegate: Call<R>
+) : Call<R> by delegate {
+
+    private val maxRetries = 3
+
+    override fun enqueue(callback: Callback<R>) {
+        delegate.enqueue(object : Callback<R> {
+            var retryCount = 0
+
+            override fun onResponse(call: Call<R>, response: Response<R>) {
+                if (!response.isSuccessful && response.code() == 500 && retryCount < maxRetries) {
+                    retryCount++
+                    Log.d("RetryCall", "Retrying request. Attempt: $retryCount")
+                    delegate.clone().enqueue(this)
+                } else {
+                    callback.onResponse(call, response)
+                }
+            }
+
+            override fun onFailure(call: Call<R>, t: Throwable) {
+                if (retryCount < maxRetries) {
+                    retryCount++
+                    Log.d("RetryCall", "Retrying request. Attempt: $retryCount")
+                    delegate.clone().enqueue(this)
+                } else {
+                    callback.onFailure(call, t)
+                }
+            }
+        })
+    }
+
+    override fun clone(): Call<R> {
+        return RetryCall(delegate.clone())
     }
 }

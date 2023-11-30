@@ -27,6 +27,7 @@ android {
         }
         buildConfigField("String", "API_KEY", apiKeyProperties["API_KEY"] as String)
         buildConfigField("String", "BASE_URL", apiKeyProperties["BASE_URL"] as String)
+        buildConfigField("String", "AUTHOR_ID", apiKeyProperties["AUTHOR_ID"] as String)
     }
     buildFeatures {
         buildConfig = true

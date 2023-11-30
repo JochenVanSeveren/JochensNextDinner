@@ -1,27 +1,36 @@
 package be.hogent.jochensnextdinner.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -33,6 +42,7 @@ import be.hogent.jochensnextdinner.ui.screens.LikesScreen
 import be.hogent.jochensnextdinner.ui.screens.RecipesScreen
 import be.hogent.jochensnextdinner.ui.screens.StartScreen
 import be.hogent.jochensnextdinner.ui.theme.JochensNextDinnerTheme
+import be.hogent.jochensnextdinner.ui.viewModels.CantEatViewModel
 
 enum class JochensNextDinnerScreen {
     Start,
@@ -42,10 +52,11 @@ enum class JochensNextDinnerScreen {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JochensNextDinnerApp(
-    navController: NavHostController = rememberNavController()
-) {
+fun JochensNextDinnerApp() {
+    val navController = rememberNavController()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val currentDestination by navController.currentBackStackEntryAsState()
     val currentRoute = currentDestination?.destination?.route
     val title = when (currentRoute) {
@@ -57,6 +68,7 @@ fun JochensNextDinnerApp(
     }
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopBar(
                 title,
@@ -64,7 +76,17 @@ fun JochensNextDinnerApp(
             )
         },
         bottomBar = {
-            if (currentRoute == JochensNextDinnerScreen.Start.name) { // Show BottomAppBar only on Start screen
+            AnimatedVisibility(
+                visible = currentRoute == JochensNextDinnerScreen.Start.name,
+                enter = slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = tween(durationMillis = 500)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = tween(durationMillis = 500)
+                )
+            ) {
                 BottomAppBar(
                     actions = {
                         Row(
@@ -100,7 +122,11 @@ fun JochensNextDinnerApp(
             }
         },
         floatingActionButton = {
-            if (currentRoute != JochensNextDinnerScreen.Start.name) { // Show FAB on all screens except Start
+            AnimatedVisibility(
+                visible = currentRoute != JochensNextDinnerScreen.Start.name,
+                enter = fadeIn(animationSpec = tween(durationMillis = 3500)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 500))
+            ) {
                 FloatingActionButton(
                     onClick = { /* do something */ },
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -108,14 +134,15 @@ fun JochensNextDinnerApp(
                 ) {
                     Icon(
                         Icons.Filled.Add,
-                        "Localized description",
+                        "Add button",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
         }
-    ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
+    ) {
+        Surface(modifier = Modifier.padding(it), color = MaterialTheme.colorScheme.background) {
+            val cantEatViewModel: CantEatViewModel = viewModel(factory = CantEatViewModel.Factory)
             NavHost(
                 navController = navController,
                 startDestination = JochensNextDinnerScreen.Start.name,
@@ -129,7 +156,7 @@ fun JochensNextDinnerApp(
                     )
                 }
                 composable(route = JochensNextDinnerScreen.CantEatScreen.name) {
-                    CantEatScreen()
+                    CantEatScreen(cantEatViewModel.cantEatUiState)
                 }
                 composable(route = JochensNextDinnerScreen.LikeScreen.name) {
                     LikesScreen()

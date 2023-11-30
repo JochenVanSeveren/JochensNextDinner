@@ -1,9 +1,14 @@
+import org.jetbrains.kotlin.konan.properties.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
+
+val apiKeyPropertiesFile = rootProject.file("local.properties")
+val apiKeyProperties = Properties()
+apiKeyProperties.load(apiKeyPropertiesFile.inputStream())
 
 android {
     namespace = "be.hogent.jochensnextdinner"
@@ -20,8 +25,12 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-
-//        buildConfigField 'String', 'ANOTHER_API_KEY', MapsSecrets.ANOTHER_API_KEY
+        buildConfigField("String", "API_KEY", apiKeyProperties["API_KEY"] as String)
+        buildConfigField("String", "BASE_URL", apiKeyProperties["BASE_URL"] as String)
+    }
+    buildFeatures {
+        buildConfig = true
+        compose = true
     }
 
     buildTypes {
@@ -39,9 +48,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-    }
-    buildFeatures {
-        compose = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -88,9 +94,4 @@ dependencies {
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-}
-
-secrets {
-    propertiesFileName = "secrets.properties"
-    defaultPropertiesFileName = "local.properties"
 }

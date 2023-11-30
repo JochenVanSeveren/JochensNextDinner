@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Jochens Next Dinner</string>
+
+    <string name="navigate_to_cant_eat_screen">navigate to Can\'t Eat Screen</string>
+    <string name="cant_eat_screen">Can\'t Eat Screen</string>
+    <string name="navigate_to_like_screen">navigate to Like Screen</string>
+    <string name="like_screen">Like Screen</string>
+    <string name="navigate_to_recipe_screen">navigate to Recipe Screen</string>
+    <string name="recipe_screen">Recipe Screen</string>
+    <string name="navigate_to_start_screen">navigate to Start Screen</string>
+    <string name="start_screen">Jochens Next Dinner</string>
+    <string name="navigate_up">navigate up</string>
 </resources>

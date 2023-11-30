@@ -27,10 +27,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -54,24 +57,25 @@ enum class JochensNextDinnerScreen {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JochensNextDinnerApp() {
-    val navController = rememberNavController()
+fun JochensNextDinnerApp(navController: NavHostController = rememberNavController()) {
+    val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val currentDestination by navController.currentBackStackEntryAsState()
     val currentRoute = currentDestination?.destination?.route
     val title = when (currentRoute) {
-        JochensNextDinnerScreen.Start.name -> "Jochens Next Dinner"
-        JochensNextDinnerScreen.CantEatScreen.name -> "Cant Eats"
-        JochensNextDinnerScreen.LikeScreen.name -> "Likes"
-        JochensNextDinnerScreen.RecipeScreen.name -> "Recipes"
+        JochensNextDinnerScreen.Start.name ->   context.getString(R.string.start_screen)
+        JochensNextDinnerScreen.CantEatScreen.name ->  context.getString(R.string.cant_eat_screen)
+        JochensNextDinnerScreen.LikeScreen.name ->  context.getString(R.string.like_screen)
+        JochensNextDinnerScreen.RecipeScreen.name ->  context.getString(R.string.recipe_screen)
         else -> ""
     }
+
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopBar(
-                title,
+                title.toString(),
                 navController = navController
             )
         },
@@ -97,21 +101,21 @@ fun JochensNextDinnerApp() {
                             IconButton(onClick = { navController.navigate(JochensNextDinnerScreen.CantEatScreen.name) }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.skull),
-                                    contentDescription = "Nav button to canteats",
+                                    contentDescription = context.getString(R.string.navigate_to_cant_eat_screen),
                                     tint = MaterialTheme.colorScheme.onPrimary
                                 )
                             }
                             IconButton(onClick = { navController.navigate(JochensNextDinnerScreen.LikeScreen.name) }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.thumb_up),
-                                    contentDescription = "Nav button to likes",
+                                    contentDescription = context.getString(R.string.navigate_to_like_screen),
                                     tint = MaterialTheme.colorScheme.onPrimary
                                 )
                             }
                             IconButton(onClick = { navController.navigate(JochensNextDinnerScreen.RecipeScreen.name) }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.skillet),
-                                    contentDescription = "Nav button to recipes",
+                                    contentDescription = context.getString(R.string.navigate_to_recipe_screen),
                                     tint = MaterialTheme.colorScheme.onPrimary
                                 )
                             }

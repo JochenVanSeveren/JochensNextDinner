@@ -4,9 +4,6 @@ import be.hogent.jochensnextdinner.model.CantEat
 import retrofit2.http.*
 
 interface CantEatService {
-    @GET("canteats/{id}")
-    suspend fun getCantEat(@Path("id") id: String): CantEat
-
     @GET("canteats")
     suspend fun getAllCantEats(): List<CantEat>
 

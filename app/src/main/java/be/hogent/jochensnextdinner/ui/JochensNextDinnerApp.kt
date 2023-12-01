@@ -1,5 +1,6 @@
 package be.hogent.jochensnextdinner.ui
 
+import CantEatScreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -24,6 +25,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -32,7 +35,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -40,7 +42,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.ui.components.TopBar
-import be.hogent.jochensnextdinner.ui.screens.CantEatScreen
 import be.hogent.jochensnextdinner.ui.screens.LikesScreen
 import be.hogent.jochensnextdinner.ui.screens.RecipesScreen
 import be.hogent.jochensnextdinner.ui.screens.StartScreen
@@ -63,12 +64,16 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
     val currentDestination by navController.currentBackStackEntryAsState()
     val currentRoute = currentDestination?.destination?.route
     val title = when (currentRoute) {
-        JochensNextDinnerScreen.Start.name ->   context.getString(R.string.app_name)
-        JochensNextDinnerScreen.CantEatScreen.name ->  context.getString(R.string.cant_eat_screen)
-        JochensNextDinnerScreen.LikeScreen.name ->  context.getString(R.string.like_screen)
-        JochensNextDinnerScreen.RecipeScreen.name ->  context.getString(R.string.recipe_screen)
+        JochensNextDinnerScreen.Start.name -> context.getString(R.string.app_name)
+        JochensNextDinnerScreen.CantEatScreen.name -> context.getString(R.string.cant_eat_screen)
+        JochensNextDinnerScreen.LikeScreen.name -> context.getString(R.string.like_screen)
+        JochensNextDinnerScreen.RecipeScreen.name -> context.getString(R.string.recipe_screen)
         else -> ""
     }
+
+    val cantEatViewModel: CantEatViewModel = viewModel(factory = CantEatViewModel.Factory)
+    val triggerAdd = remember { mutableStateOf(false) }
+
 
 
     Scaffold(
@@ -132,7 +137,7 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
                 exit = fadeOut(animationSpec = tween(durationMillis = 500))
             ) {
                 FloatingActionButton(
-                    onClick = { /* do something */ },
+                    onClick = { triggerAdd.value = true },
                     containerColor = MaterialTheme.colorScheme.primary,
                     elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
                 ) {
@@ -146,7 +151,6 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
         }
     ) {
         Surface(modifier = Modifier.padding(it), color = MaterialTheme.colorScheme.background) {
-            val cantEatViewModel: CantEatViewModel = viewModel(factory = CantEatViewModel.Factory)
             NavHost(
                 navController = navController,
                 startDestination = JochensNextDinnerScreen.Start.name,
@@ -160,7 +164,14 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
                     )
                 }
                 composable(route = JochensNextDinnerScreen.CantEatScreen.name) {
-                    CantEatScreen(cantEatViewModel.cantEatUiState)
+                    CantEatScreen(
+                        cantEatUiState = cantEatViewModel.cantEatUiState,
+                        onSave = cantEatViewModel::saveCantEat,
+                        onDelete = cantEatViewModel::deleteCantEat,
+                        onAdd = cantEatViewModel::addCantEat,
+                        onRefresh = cantEatViewModel::getCantEats,
+                        triggerAdd = triggerAdd
+                    )
                 }
                 composable(route = JochensNextDinnerScreen.LikeScreen.name) {
                     LikesScreen()

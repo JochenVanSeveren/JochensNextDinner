@@ -15,6 +15,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import java.lang.reflect.Type
 import okhttp3.Response as http3Response
+import okhttp3.logging.HttpLoggingInterceptor
 
 /**
  * Interface for the application container that provides the repository instance.
@@ -50,6 +51,14 @@ class DefaultAppContainer : AppContainer {
 
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(ApiKeyInterceptor(apiKey))
+        .apply {
+            if (BuildConfig.DEBUG) {
+                val loggingInterceptor = HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+                addInterceptor(loggingInterceptor)
+            }
+        }
         .build()
 
     private val retrofit: Retrofit = Retrofit.Builder()
@@ -142,6 +151,7 @@ class RetryCall<R>(
             }
         })
     }
+
 
     override fun clone(): Call<R> {
         return RetryCall(delegate.clone())

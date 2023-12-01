@@ -5,6 +5,6 @@ data class Like(
     val name: String,
     val category: String,
     val authorId: String,
-    val createdAt: String,  // Assuming ISO 8601 format
+    val createdAt: String,
     val updatedAt: String
 )

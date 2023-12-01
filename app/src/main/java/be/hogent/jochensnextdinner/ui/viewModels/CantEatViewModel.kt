@@ -1,6 +1,5 @@
 package be.hogent.jochensnextdinner.ui.viewModels
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,7 +19,7 @@ import java.io.IOException
 
 sealed interface CantEatUiState {
     data class Success(val cantEats: List<CantEat>) : CantEatUiState
-    object Error : CantEatUiState
+    data class Error(val message: String) : CantEatUiState
     object Loading : CantEatUiState
 }
 
@@ -33,25 +32,61 @@ class CantEatViewModel(private val jochensNextDinnerRepository: JochensNextDinne
         getCantEats()
     }
 
-   fun getCantEats() {
+
+fun getCantEats() {
     viewModelScope.launch {
         cantEatUiState = CantEatUiState.Loading
-        try {
+        cantEatUiState = try {
             val cantEats = jochensNextDinnerRepository.getCantEats()
-            cantEatUiState = CantEatUiState.Success(cantEats)
+            val sortedCantEats = cantEats.sortedBy { it.createdAt }
+            CantEatUiState.Success(sortedCantEats)
         } catch (e: IOException) {
             Log.e("CantEatViewModel", "IOException: ${e.message}")
-            cantEatUiState = CantEatUiState.Error
+            CantEatUiState.Error("Failed to load CantEats: ${e.message}")
         } catch (e: HttpException) {
             Log.e("CantEatViewModel", "HttpException: ${e.message}")
-            cantEatUiState = CantEatUiState.Error
+            CantEatUiState.Error("Failed to load CantEats: ${e.message}")
         }
     }
 }
 
-    companion object {
-        private const val TAG = "CantEatViewModel"
+    fun addCantEat(cantEat: CantEat) {
+        viewModelScope.launch {
+            try {
+                jochensNextDinnerRepository.addCantEat(cantEat)
+                getCantEats()
+            } catch (e: Exception) {
+                Log.e("CantEatViewModel", "Exception: ${e.message}")
+                cantEatUiState = CantEatUiState.Error("Failed to add CantEat: ${e.message}")
+            }
+        }
+    }
 
+    fun saveCantEat(cantEat: CantEat) {
+        viewModelScope.launch {
+            try {
+                jochensNextDinnerRepository.updateCantEat(cantEat)
+                getCantEats()
+            } catch (e: Exception) {
+                Log.e("CantEatViewModel", "Exception: ${e.message}")
+                cantEatUiState = CantEatUiState.Error("Failed to save CantEat: ${e.message}")
+            }
+        }
+    }
+
+    fun deleteCantEat(cantEat: CantEat) {
+        viewModelScope.launch {
+            try {
+                jochensNextDinnerRepository.deleteCantEat(cantEat)
+                getCantEats()
+            } catch (e: Exception) {
+                Log.e("CantEatViewModel", "Exception: ${e.message}")
+                cantEatUiState = CantEatUiState.Error("Failed to delete CantEat: ${e.message}")
+            }
+        }
+    }
+
+    companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as JochensNextDinnerApplication)

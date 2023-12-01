@@ -16,10 +16,18 @@ import retrofit2.Retrofit
 import java.lang.reflect.Type
 import okhttp3.Response as http3Response
 
+/**
+ * Interface for the application container that provides the repository instance.
+ */
 interface AppContainer {
     val jochensNextDinnerRepository: JochensNextDinnerRepository
 }
 
+/**
+ * Interceptor for adding the API key to each request.
+ *
+ * @property apiKey The API key to be added to each request.
+ */
 class ApiKeyInterceptor(private val apiKey: String) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): http3Response {
         val originalRequest = chain.request()
@@ -30,6 +38,12 @@ class ApiKeyInterceptor(private val apiKey: String) : Interceptor {
     }
 }
 
+/**
+ * The default application container that provides the repository instance.
+ *
+ * @property baseUrl The base URL for the API.
+ * @property apiKey The API key for the API.
+ */
 class DefaultAppContainer : AppContainer {
     private val baseUrl = BuildConfig.BASE_URL
     private val apiKey = BuildConfig.API_KEY
@@ -54,7 +68,9 @@ class DefaultAppContainer : AppContainer {
         NetworkJochensNextDinnerRepository(retrofitService)
     }
 }
-
+/**
+ * Factory for creating call adapters that support retrying API calls.
+ */
 class RetryCallAdapterFactory : CallAdapter.Factory() {
     override fun get(
         returnType: Type,
@@ -69,6 +85,11 @@ class RetryCallAdapterFactory : CallAdapter.Factory() {
     }
 }
 
+/**
+ * Call adapter that delegates to another call adapter and supports retrying API calls.
+ *
+ * @property delegate The call adapter to delegate to.
+ */
 class RetryCallAdapter<R>(
     private val delegate: CallAdapter<R, *>
 ) : CallAdapter<R, Any> {
@@ -85,6 +106,11 @@ class RetryCallAdapter<R>(
     }
 }
 
+/**
+ * Call that delegates to another call and supports retrying API calls.
+ *
+ * @property delegate The call to delegate to.
+ */
 class RetryCall<R>(
     private val delegate: Call<R>
 ) : Call<R> by delegate {

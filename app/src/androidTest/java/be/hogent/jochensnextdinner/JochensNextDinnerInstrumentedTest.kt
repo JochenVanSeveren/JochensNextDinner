@@ -67,7 +67,7 @@ fun setup() {
             .performClick()
         composeTestRule.onNodeWithContentDescription(getResourceString(R.string.navigate_up))
             .performClick()
-        composeTestRule.onNodeWithText(getResourceString(R.string.start_screen))
+        composeTestRule.onNodeWithText(getResourceString(R.string.app_name))
             .assertIsDisplayed()
     }
 

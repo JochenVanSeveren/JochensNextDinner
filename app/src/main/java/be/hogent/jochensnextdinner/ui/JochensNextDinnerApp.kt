@@ -63,7 +63,7 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
     val currentDestination by navController.currentBackStackEntryAsState()
     val currentRoute = currentDestination?.destination?.route
     val title = when (currentRoute) {
-        JochensNextDinnerScreen.Start.name ->   context.getString(R.string.start_screen)
+        JochensNextDinnerScreen.Start.name ->   context.getString(R.string.app_name)
         JochensNextDinnerScreen.CantEatScreen.name ->  context.getString(R.string.cant_eat_screen)
         JochensNextDinnerScreen.LikeScreen.name ->  context.getString(R.string.like_screen)
         JochensNextDinnerScreen.RecipeScreen.name ->  context.getString(R.string.recipe_screen)
@@ -75,7 +75,7 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopBar(
-                title.toString(),
+                title,
                 navController = navController
             )
         },

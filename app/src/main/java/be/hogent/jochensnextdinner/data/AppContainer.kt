@@ -1,55 +1,39 @@
 package be.hogent.jochensnextdinner.data
 
+import android.content.Context
 import android.util.Log
 import be.hogent.jochensnextdinner.BuildConfig
-import be.hogent.jochensnextdinner.network.CantEatService
+import be.hogent.jochensnextdinner.data.database.CantEatDb
+import be.hogent.jochensnextdinner.network.CantEatApiService
+import be.hogent.jochensnextdinner.network.NetworkConnectionInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import java.lang.reflect.Type
-import okhttp3.Response as http3Response
-import okhttp3.logging.HttpLoggingInterceptor
 
-/**
- * Interface for the application container that provides the repository instance.
- */
 interface AppContainer {
-    val jochensNextDinnerRepository: JochensNextDinnerRepository
-}
-
-/**
- * Interceptor for adding the API key to each request.
- *
- * @property apiKey The API key to be added to each request.
- */
-class ApiKeyInterceptor(private val apiKey: String) : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): http3Response {
-        val originalRequest = chain.request()
-        val newRequest = originalRequest.newBuilder()
-            .header("x-api-key", apiKey)
-            .build()
-        return chain.proceed(newRequest)
+    val cantEatRepository: CantEatRepository
+    //val likesRepository: LikesRepository
+    //val recipceRepository: RecipceRepository
     }
-}
 
-/**
- * The default application container that provides the repository instance.
- *
- * @property baseUrl The base URL for the API.
- * @property apiKey The API key for the API.
- */
-class DefaultAppContainer : AppContainer {
+class DefaultAppContainer(private val context: Context) : AppContainer {
+
     private val baseUrl = BuildConfig.BASE_URL
     private val apiKey = BuildConfig.API_KEY
 
+    private val networkCheck = NetworkConnectionInterceptor(context)
+
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(networkCheck)
         .addInterceptor(ApiKeyInterceptor(apiKey))
         .apply {
             if (BuildConfig.DEBUG) {
@@ -64,19 +48,30 @@ class DefaultAppContainer : AppContainer {
     private val retrofit: Retrofit = Retrofit.Builder()
         .client(okHttpClient)
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
-//        API sometimes returns 500 error, so I needed a reply method
+//        API sometimes returns 500 error, so I needed a retry method
         .addCallAdapterFactory(RetryCallAdapterFactory())
         .baseUrl(baseUrl)
         .build()
 
-    private val retrofitService: CantEatService by lazy {
-        retrofit.create(CantEatService::class.java)
+    private val retrofitService: CantEatApiService by lazy {
+        retrofit.create(CantEatApiService::class.java)
     }
 
-    override val jochensNextDinnerRepository: JochensNextDinnerRepository by lazy {
-        NetworkJochensNextDinnerRepository(retrofitService)
+    override val cantEatRepository: CantEatRepository by lazy {
+        CachingCantEatRepository(CantEatDb.getDatabase(context = context).cantEatDao(), retrofitService, context)
     }
 }
+
+class ApiKeyInterceptor(private val apiKey: String) : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+        val originalRequest = chain.request()
+        val newRequest = originalRequest.newBuilder()
+            .header("x-api-key", apiKey)
+            .build()
+        return chain.proceed(newRequest)
+    }
+}
+
 /**
  * Factory for creating call adapters that support retrying API calls.
  */

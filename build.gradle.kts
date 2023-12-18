@@ -13,6 +13,8 @@ tasks.dokkaHtml.configure {
     outputDirectory.set(buildDir.resolve("dokka"))
 }
 
-dependencies {
-    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.9.10")
+    dependencies {
+
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.9.10")
+    }
 }

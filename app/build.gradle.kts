@@ -4,6 +4,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
+    id("org.jetbrains.dokka") version "1.9.10"
 }
 
 val apiKeyPropertiesFile = rootProject.file("local.properties")

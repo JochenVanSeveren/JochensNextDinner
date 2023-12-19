@@ -1,29 +1,20 @@
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
-import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.model.CantEat
+import be.hogent.jochensnextdinner.ui.canteats.CantEatApiState
 import be.hogent.jochensnextdinner.ui.canteats.CantEatViewModel
+import be.hogent.jochensnextdinner.ui.components.CantEatListItem
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-
 
 
 @Composable
@@ -33,24 +24,20 @@ fun CantEatScreen(
     isAddNewVisible: Boolean = false,
     addNewVisibleReset: () -> Unit = {},
 ) {
+    val cantEatListState by cantEatViewModel.uiListState.collectAsState()
     val isRefreshing = remember { mutableStateOf(false) }
-//    SwipeRefresh(
-//        state = rememberSwipeRefreshState(isRefreshing = isRefreshing.value),
-//        onRefresh = {
-//            isRefreshing.value = true
-//            onRefresh.invoke()
-//            isRefreshing.value = false
-//        }
-//    ) {
-//        when (cantEatUiState) {
-//            is CantEatUiState.Loading -> {
-//                Text(text = "Loading...")
-//            }
-//
-//            is CantEatUiState.Error -> {
-//                Text(text = cantEatUiState.message)
-//            }
-//
+
+    val cantEatApiState = cantEatViewModel.cantEatApiState
+
+    SwipeRefresh(
+        state = rememberSwipeRefreshState(isRefreshing = isRefreshing.value),
+        onRefresh = {
+            isRefreshing.value = true
+            // Your refresh logic here
+            isRefreshing.value = false
+        }
+    ) {
+
 //            is CantEatUiState.Success -> {
 //                LazyColumn {
 //                    item {
@@ -70,15 +57,38 @@ fun CantEatScreen(
 //                            onDelete = onDelete
 //                        )
 //                    }
-//
-//                }
-//            }
-//            else -> {
-//                Text(text = "Something went wrong")
-//            }
-//        }
-//    }
+
+        Box(modifier = modifier) {
+            when (cantEatApiState) {
+                is CantEatApiState.Loading -> Text("Loading...")
+                is CantEatApiState.Error -> Text("Couldn't load...")
+                is CantEatApiState.Success -> {
+                    LazyColumn {
+                        item {
+                            if (isAddNewVisible) {
+                                CantEatListItem(
+                                    cantEat = CantEat(name = ""),
+                                    onSave = {/* onSave logic here */ },
+                                    onDelete = {/* onDelete logic here */ }
+                                )
+                            }
+                        }
+                        items(cantEatListState.cantEatList) { cantEat ->
+                            CantEatListItem(
+                                cantEat = cantEat,
+                                onSave = {},
+                                onDelete = {/* onDelete logic here */ }
+                            )
+                        }
+                    }
+
+                }
+            }
+
+        }
+    }
 }
+
 
 //@Composable
 //fun CantEatListItem(

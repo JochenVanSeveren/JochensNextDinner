@@ -45,12 +45,13 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
                 addInterceptor(loggingInterceptor)
             }
         }
-        .cache(null)
         .build()
+
+    private val json = Json { ignoreUnknownKeys = true }
 
     private val retrofit: Retrofit = Retrofit.Builder()
         .client(okHttpClient)
-        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
 //        API sometimes returns 500 error, so I needed a retry method
         .addCallAdapterFactory(RetryCallAdapterFactory())
         .baseUrl(baseUrl)

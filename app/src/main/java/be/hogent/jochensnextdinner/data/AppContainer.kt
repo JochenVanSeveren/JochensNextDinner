@@ -23,7 +23,7 @@ interface AppContainer {
     val cantEatRepository: CantEatRepository
     //val likesRepository: LikesRepository
     //val recipceRepository: RecipceRepository
-    }
+}
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
 
@@ -38,11 +38,14 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         .apply {
             if (BuildConfig.DEBUG) {
                 val loggingInterceptor = HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
+                    level = HttpLoggingInterceptor.Level.BASIC
+                    redactHeader("Authorization")
+                    redactHeader("Cookie")
                 }
                 addInterceptor(loggingInterceptor)
             }
         }
+        .cache(null)
         .build()
 
     private val retrofit: Retrofit = Retrofit.Builder()
@@ -58,7 +61,11 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     }
 
     override val cantEatRepository: CantEatRepository by lazy {
-        CachingCantEatRepository(CantEatDb.getDatabase(context = context).cantEatDao(), retrofitService, context)
+        CachingCantEatRepository(
+            CantEatDb.getDatabase(context = context).cantEatDao(),
+            retrofitService,
+            context
+        )
     }
 }
 

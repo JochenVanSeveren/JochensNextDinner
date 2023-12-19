@@ -6,15 +6,14 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.http.GET
 
 interface CantEatApiService {
-    @GET("cantEats")
+    @GET("canteats")
     suspend fun getCantEats(): List<ApiCantEat>
 }
 
 fun CantEatApiService.getCantEatsAsFlow(): Flow<List<ApiCantEat>> = flow {
     try {
         emit(getCantEats())
-    }
-    catch(e: Exception){
-        Log.e("API", "getCantEatsAsFlow: "+e.stackTraceToString(), )
+    } catch (e: Exception) {
+        Log.e("API", "getCantEatsAsFlow: " + e.stackTraceToString())
     }
 }

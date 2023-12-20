@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -72,26 +73,14 @@ fun CantEatListItem(
                             contentDescription = stringResource(id = R.string.save)
                         )
                     }
-//                    IconButton(onClick = {
-//                        if (text.value.isNotBlank()) { // Check for non-empty string
-//                            onSave(
-//                                when (input) {
-//                                    is CantEatInput.Existing -> input.cantEat.copy(name = text.value)
-////                                    is CantEatInput.New -> CantEat(name = text.value)
-//                                    else -> throw IllegalStateException("Unexpected CantEatInput type")
-//                                } f
-//                            )
-//                            isEditing.value = false
-//                            addNewVisibleReset()
-//                        }
-//                    }
-//                    ) {
-//                        Icon(
-//                            Icons.Filled.Check,
-//                            contentDescription = stringResource(id = R.string.save)
-//                        )
-//                    }
-
+                    IconButton(onClick = {
+                        onDelete(cantEat)
+                    }) {
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = stringResource(id = R.string.delete)
+                        )
+                    }
                 }
             } else {
                 IconButton(onClick = {

@@ -11,9 +11,15 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import be.hogent.jochensnextdinner.R
@@ -28,15 +34,23 @@ fun CantEatListItem(
     val isNew = cantEat.name.isEmpty()
     val isEditing = remember { mutableStateOf(isNew) }
     val name = remember { mutableStateOf(cantEat.name) }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(isEditing.value) {
+        if (isEditing.value) {
+            focusRequester.requestFocus()
+        }
+    }
 
     ListItem(
         headlineContent = {
             if (isEditing.value) {
-                BasicTextField(
+                TextField(
                     value = name.value,
-                    onValueChange = { /*TODO*/ },
+                    onValueChange = { name.value = it },
                     singleLine = true,
-                    textStyle = MaterialTheme.typography.bodyLarge
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.focusRequester(focusRequester)
                 )
             } else {
                 Text(text = name.value, fontWeight = FontWeight.Bold)
@@ -80,7 +94,9 @@ fun CantEatListItem(
 
                 }
             } else {
-                IconButton(onClick = { isEditing.value = true }) {
+                IconButton(onClick = {
+                    isEditing.value = true
+                }) {
                     Icon(
                         Icons.Filled.Edit,
                         contentDescription = stringResource(id = androidx.compose.material3.R.string.m3c_bottom_sheet_expand_description)

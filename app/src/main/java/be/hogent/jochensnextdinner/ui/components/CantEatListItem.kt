@@ -1,5 +1,6 @@
 package be.hogent.jochensnextdinner.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -63,6 +64,7 @@ fun CantEatListItem(
             if (isEditing.value) {
                 Row {
                     IconButton(onClick = {
+                        Log.d("new name", name.value)
                         onSave(cantEat.copy(name = name.value))
                         isEditing.value = false
                     }) {

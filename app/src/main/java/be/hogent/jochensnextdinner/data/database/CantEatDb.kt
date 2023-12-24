@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 /**
  * Database class with a singleton Instance object.
  */
-@Database(entities = [dbCantEat::class], version = 2, exportSchema = false)
+@Database(entities = [dbCantEat::class], version = 5, exportSchema = false)
 abstract class CantEatDb : RoomDatabase() {
 
     abstract fun cantEatDao(): CantEatDao

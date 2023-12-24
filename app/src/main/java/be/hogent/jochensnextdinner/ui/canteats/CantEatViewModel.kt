@@ -1,5 +1,6 @@
 package be.hogent.jochensnextdinner.ui.canteats
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,19 +14,15 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import be.hogent.jochensnextdinner.JndApplication
 import be.hogent.jochensnextdinner.data.CantEatRepository
 import be.hogent.jochensnextdinner.model.CantEat
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 
 class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewModel() {
-    private val _uiState = MutableStateFlow(CantEatState())
-    val uiState: StateFlow<CantEatState> = _uiState.asStateFlow()
+//    private val _uiState = MutableStateFlow(CantEatState())
 
     lateinit var uiListState: StateFlow<CantEatListState>
 
@@ -39,14 +36,29 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
         Log.i("vm inspection", "CantEatViewModel init")
     }
 
-    fun saveCantEat() {
-//        TODO: if cant eat is new, then set addNewVisible to false
-        viewModelScope.launch { saveCantEat(CantEat(_uiState.value.newCantEatName)) }
-        _uiState.update {
-            it.copy(
-                newCantEatName = "",
-            )
+    fun saveCantEat(cantEat: CantEat) {
+        try {
+            val errorMessage = validateInput(cantEat)
+            if (errorMessage != null) {
+                cantEatApiState = CantEatApiState.Error(errorMessage)
+                return
+            }
+            // TODO: if cant eat is new, then set addNewVisible to false
+            // TODO BUG: name empty
+            Log.d(TAG, "saveCantEat:  $cantEat")
+
+            viewModelScope.launch {
+                val createdCantEat = cantEatRepository.createCantEat(cantEat)
+//                    TODO: is this needed?
+                cantEatRepository.insertCantEat(createdCantEat)
+            }
+            cantEatApiState = CantEatApiState.Success
+
+        } catch (e: IOException) {
+            cantEatApiState = CantEatApiState.Error(e.message ?: "Unknown error")
         }
+
+
     }
 
 
@@ -56,9 +68,11 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
         }
     }
 
-    private fun validateInput(): Boolean {
-        return with(_uiState) {
-            value.newCantEatName.isNotEmpty()
+    private fun validateInput(cantEat: CantEat): String? {
+        return if (cantEat.name.isEmpty()) {
+            "Name cannot be empty"
+        } else {
+            null
         }
     }
 
@@ -74,19 +88,13 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
                 )
             cantEatApiState = CantEatApiState.Success
 
-            wifiWorkerState = cantEatRepository.wifiWorkInfo.map { WorkerState(it)}.stateIn(
+            wifiWorkerState = cantEatRepository.wifiWorkInfo.map { WorkerState(it) }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
                 initialValue = WorkerState(),
             )
         } catch (e: IOException) {
-            cantEatApiState = CantEatApiState.Error
-        }
-    }
-
-    private suspend fun saveCantEat(cantEat: CantEat) {
-        if (validateInput()) {
-            cantEatRepository.insertCantEat(cantEat)
+            cantEatApiState = CantEatApiState.Error(e.message ?: "Unknown error")
         }
     }
 

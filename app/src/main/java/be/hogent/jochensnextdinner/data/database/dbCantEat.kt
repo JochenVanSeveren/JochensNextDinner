@@ -1,38 +1,25 @@
 package be.hogent.jochensnextdinner.data.database
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
+import be.hogent.jochensnextdinner.BuildConfig
 import be.hogent.jochensnextdinner.model.CantEat
 
-@Entity(tableName = "cantEats")
+@Entity(tableName = "cantEats", indices = [Index(value = ["serverId"], unique = true)])
 data class dbCantEat(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    val localId: Long ,
+    val serverId: String? = null,
     val name: String,
-    val authorId: String,
-    val createdAt: String,
-    val updatedAt: String
 )
-
-fun dbCantEat.asDomainCantEat(): CantEat {
-    return CantEat(
-        this.name,
-        this.authorId,
-        this.createdAt,
-        this.updatedAt
-    )
-}
-
-fun CantEat.asDbCantEat(): dbCantEat {
-    return dbCantEat(
-        name = this.name,
-        authorId = this.authorId,
-        createdAt = this.createdAt,
-        updatedAt = this.updatedAt
-    )
-}
 
 fun List<dbCantEat>.asDomainCantEats(): List<CantEat> {
     return this.map {
-        CantEat(it.name, it.authorId, it.createdAt, it.updatedAt)
+        CantEat(
+            localId = it.localId,
+            serverId = it.serverId,
+            name = it.name,
+        )
     }
 }

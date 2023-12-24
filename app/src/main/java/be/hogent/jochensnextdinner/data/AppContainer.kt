@@ -38,7 +38,8 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         .apply {
             if (BuildConfig.DEBUG) {
                 val loggingInterceptor = HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BASIC
+//                    TODO remove logging because this contains sensitive data
+                    level = HttpLoggingInterceptor.Level.BODY
                     redactHeader("Authorization")
                     redactHeader("Cookie")
                 }

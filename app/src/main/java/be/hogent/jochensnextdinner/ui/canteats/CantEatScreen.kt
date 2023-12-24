@@ -48,8 +48,8 @@ fun CantEatScreen(
                             if (isAddNewVisible) {
                                 CantEatListItem(
                                     cantEat = CantEat(name = ""),
-                                    onSave = { cantEatViewModel.saveCantEat() },
-                                    onDelete = { cantEatViewModel.deleteCantEat(it) },
+                                    onSave = { cantEat -> cantEatViewModel.saveCantEat(cantEat) },
+                                    onDelete = { cantEat -> cantEatViewModel.deleteCantEat(cantEat) },
                                     addNewVisibleReset = addNewVisibleReset
                                 )
                             }
@@ -57,8 +57,8 @@ fun CantEatScreen(
                         items(cantEatListState.cantEatList) { cantEat ->
                             CantEatListItem(
                                 cantEat = cantEat,
-                                onSave = { cantEatViewModel.saveCantEat() },
-                                onDelete = { cantEatViewModel.deleteCantEat(it) },
+                                onSave = { cantEat -> cantEatViewModel.saveCantEat(cantEat) },
+                                onDelete = { cantEat -> cantEatViewModel.deleteCantEat(cantEat) },
                                 addNewVisibleReset = addNewVisibleReset
                             )
                         }

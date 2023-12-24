@@ -3,7 +3,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -16,15 +15,18 @@ import kotlinx.coroutines.withContext
 
 
 private const val TAG = "WithWifiWorker"
-class WifiNotificationWorker(context : Context, params: WorkerParameters): CoroutineWorker(context, params) {
+
+class WifiNotificationWorker(context: Context, params: WorkerParameters) :
+    CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         makeStatusNotification("starting the worker", applicationContext)
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             return@withContext try {
+//                TODO: remove status notification test and make it do smth useful instead
                 delay(10000L)
                 makeStatusNotification("work finished successfully", applicationContext)
                 Result.success()
-            } catch (throwable: Throwable){
+            } catch (throwable: Throwable) {
                 Result.failure()
             }
         }
@@ -37,10 +39,10 @@ fun makeStatusNotification(message: String, context: Context) {
     // Make a channel if necessary
     // Create the NotificationChannel, but only on API 26+ because
     // the NotificationChannel class is new and not in the support library
-    val name = "TaskApp"
-    val description = "TaskApp notifications"
+    val name = "jochensNextDinnerApp"
+    val description = "JochensNextDinner notifications"
     val importance = NotificationManager.IMPORTANCE_HIGH
-    val channel = NotificationChannel("taskApp", name, importance)
+    val channel = NotificationChannel("jochensNextDinnerApp", name, importance)
     channel.description = description
 
     // Add the channel
@@ -50,9 +52,9 @@ fun makeStatusNotification(message: String, context: Context) {
     notificationManager?.createNotificationChannel(channel)
 
     // Create the notification
-    val builder = NotificationCompat.Builder(context, "taskApp")
+    val builder = NotificationCompat.Builder(context, "jochensNextDinnerApp")
         .setSmallIcon(R.drawable.ic_launcher_foreground)
-        .setContentTitle("TaskApp")
+        .setContentTitle("JochensNextDinnerApp")
         .setContentText(message)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setVibrate(LongArray(0))

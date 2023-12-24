@@ -38,26 +38,6 @@ fun CantEatScreen(
         }
     ) {
 
-//            is CantEatUiState.Success -> {
-//                LazyColumn {
-//                    item {
-//                        if (triggerAdd.value) {
-//                            CantEatListItem(
-//                                input = CantEatInput.New(),
-//                                addNewVisibleReset = addNewVisibleReset,
-//                                isAddingVisisble = isAddNewVisible
-//                            )
-//                        }
-//                    }
-//
-//                    items(cantEatUiState.cantEats) { cantEat ->
-//                        CantEatListItem(
-//                            input = CantEatInput.Existing(cantEat),
-//                            onSave = onSave,
-//                            onDelete = onDelete
-//                        )
-//                    }
-
         Box(modifier = modifier) {
             when (cantEatApiState) {
                 is CantEatApiState.Loading -> Text("Loading...")
@@ -68,16 +48,18 @@ fun CantEatScreen(
                             if (isAddNewVisible) {
                                 CantEatListItem(
                                     cantEat = CantEat(name = ""),
-                                    onSave = {/* onSave logic here */ },
-                                    onDelete = {/* onDelete logic here */ }
+                                    onSave = { cantEatViewModel.saveCantEat() },
+                                    onDelete = { cantEatViewModel.deleteCantEat(it) },
+                                    addNewVisibleReset = addNewVisibleReset
                                 )
                             }
                         }
                         items(cantEatListState.cantEatList) { cantEat ->
                             CantEatListItem(
                                 cantEat = cantEat,
-                                onSave = {},
-                                onDelete = {/* onDelete logic here */ }
+                                onSave = { cantEatViewModel.saveCantEat() },
+                                onDelete = { cantEatViewModel.deleteCantEat(it) },
+                                addNewVisibleReset = addNewVisibleReset
                             )
                         }
                     }
@@ -89,84 +71,3 @@ fun CantEatScreen(
     }
 }
 
-
-//@Composable
-//fun CantEatListItem(
-//    addNewVisibleReset: () -> Unit = {},
-//    isAddingVisisble:  Boolean = false,
-//) {
-//    val text = remember {
-//        mutableStateOf(
-//            when (input) {
-//                is CantEatInput.Existing -> input.cantEat.name
-//                is CantEatInput.New -> ""
-//            }
-//        )
-//    }
-//    val isEditing = remember { mutableStateOf(input is CantEatInput.New) }
-//
-////TODO: add empty string validation
-//
-//    ListItem(
-//        headlineContent = {
-//            if (isEditing.value) {
-//                BasicTextField(
-//                    value = text.value,
-//                    onValueChange = { text.value = it },
-//                    singleLine = true,
-//                    textStyle = MaterialTheme.typography.bodyLarge
-//                )
-//            } else {
-//                Text(text = text.value, fontWeight = FontWeight.Bold)
-//            }
-//        },
-//        colors = ListItemDefaults.colors(
-//            containerColor = MaterialTheme.colorScheme.background,
-//        ),
-//        trailingContent = {
-//            if (isEditing.value) {
-//                Row {
-//                    IconButton(onClick = {
-//                        onSave(
-//                            when (input) {
-//                                is CantEatInput.Existing -> input.cantEat.copy(name = text.value)
-////                                is CantEatInput.New -> CantEat()
-//                                else -> throw IllegalStateException("Unexpected CantEatInput type")
-//                            }
-//                        )
-//                        isEditing.value = false
-//                        addNewVisibleReset()
-//                    }) {
-//                        Icon(
-//                            Icons.Filled.Check,
-//                            contentDescription = stringResource(id = R.string.save)
-//                        )
-//                    }
-//                    IconButton(onClick = {
-//                        if (text.value.isNotBlank()) { // Check for non-empty string
-//                            onSave(
-//                                when (input) {
-//                                    is CantEatInput.Existing -> input.cantEat.copy(name = text.value)
-////                                    is CantEatInput.New -> CantEat(name = text.value)
-//                                    else -> throw IllegalStateException("Unexpected CantEatInput type")
-//                                }f
-//                            )
-//                            isEditing.value = false
-//                            addNewVisibleReset()
-//                        }
-//                    }) {
-//                        Icon(Icons.Filled.Check, contentDescription = stringResource(id = R.string.save))
-//                    }
-//
-//                }
-//            } else {
-//                IconButton(onClick = { isEditing.value = true }) {
-//                    Icon(
-//                        Icons.Filled.Edit,
-//                        contentDescription = stringResource(id = androidx.compose.material3.R.string.m3c_bottom_sheet_expand_description)
-//                    )
-//                }
-//            }
-//        }
-//    )
-//}

@@ -1,7 +1,6 @@
 package be.hogent.jochensnextdinner.ui.components
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
@@ -20,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import be.hogent.jochensnextdinner.R
@@ -31,6 +29,7 @@ fun CantEatListItem(
     cantEat: CantEat,
     onSave: (CantEat) -> Unit,
     onDelete: (CantEat) -> Unit,
+    addNewVisibleReset: () -> Unit = {},
 ) {
     val isNew = cantEat.name.isEmpty()
     val isEditing = remember { mutableStateOf(isNew) }
@@ -64,9 +63,8 @@ fun CantEatListItem(
             if (isEditing.value) {
                 Row {
                     IconButton(onClick = {
-//                        onSave(name.value)
+                        onSave(cantEat.copy(name = name.value))
                         isEditing.value = false
-//                        addNewVisibleReset()
                     }) {
                         Icon(
                             Icons.Filled.Check,
@@ -74,7 +72,11 @@ fun CantEatListItem(
                         )
                     }
                     IconButton(onClick = {
-                        onDelete(cantEat)
+                        if (!isNew)
+                            onDelete(cantEat)
+                        else
+                            addNewVisibleReset()
+                        isEditing.value = false
                     }) {
                         Icon(
                             Icons.Filled.Delete,

@@ -39,7 +39,8 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
         Log.i("vm inspection", "CantEatViewModel init")
     }
 
-    fun addCantEat() {
+    fun saveCantEat() {
+//        TODO: if cant eat is new, then set addNewVisible to false
         viewModelScope.launch { saveCantEat(CantEat(_uiState.value.newCantEatName)) }
         _uiState.update {
             it.copy(
@@ -48,15 +49,16 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
         }
     }
 
-    private fun validateInput(): Boolean {
-        return with(_uiState) {
-            value.newCantEatName.isNotEmpty()
+
+    fun deleteCantEat(cantEat: CantEat) {
+        viewModelScope.launch {
+            cantEatRepository.deleteCantEat(cantEat)
         }
     }
 
-    fun setNewCantEatName(newCantEatName: String) {
-        _uiState.update {
-            it.copy(newCantEatName = newCantEatName)
+    private fun validateInput(): Boolean {
+        return with(_uiState) {
+            value.newCantEatName.isNotEmpty()
         }
     }
 

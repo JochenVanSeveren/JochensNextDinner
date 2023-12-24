@@ -105,12 +105,15 @@ dependencies {
 
     // Room
     // VERSION 2.6.1 is incompatible with kvt tools to read the room database annotations or smth
-    val room_version = "2.5.0"
-    implementation("androidx.room:room-runtime:$room_version")
+    val roomVersion = "2.5.0"
+    //noinspection GradleDependency
+    implementation("androidx.room:room-runtime:$roomVersion")
     // optional - Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:$room_version")
+    //noinspection GradleDependency
+    implementation("androidx.room:room-ktx:$roomVersion")
     // To use Kotlin Symbol Processing (KSP)
-    ksp("androidx.room:room-compiler:$room_version")
+    //noinspection GradleDependency
+    ksp("androidx.room:room-compiler:$roomVersion")
 }
 
 

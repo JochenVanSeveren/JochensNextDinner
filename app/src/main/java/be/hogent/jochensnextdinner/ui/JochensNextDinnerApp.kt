@@ -56,6 +56,7 @@ enum class JochensNextDinnerScreen {
     RecipeScreen
 }
 
+/*TODO: feed toevoegen */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,9 +73,7 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
         else -> ""
     }
 
-    val cantEatViewModel: CantEatViewModel = viewModel(factory = CantEatViewModel.Factory)
     var isAddNewVisible by remember { mutableStateOf(false) }
-
 
 
     Scaffold(

@@ -8,6 +8,8 @@ import retrofit2.http.GET
 interface CantEatApiService {
     @GET("canteats")
     suspend fun getCantEats(): List<ApiCantEat>
+
+    /*TODO: add others*/
 }
 
 fun CantEatApiService.getCantEatsAsFlow(): Flow<List<ApiCantEat>> = flow {

@@ -36,6 +36,10 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
         Log.i("vm inspection", "CantEatViewModel init")
     }
 
+    fun refresh() {
+        getCantEatsFromRepo()
+    }
+
     fun saveCantEat(cantEat: CantEat) {
         try {
             val errorMessage = validateInput(cantEat)
@@ -43,14 +47,11 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
                 cantEatApiState = CantEatApiState.Error(errorMessage)
                 return
             }
-            // TODO: if cant eat is new, then set addNewVisible to false
-            // TODO BUG: name empty
+            // TODO: if cant eat is new, then set addNewVisible to false and reset the name
             Log.d(TAG, "saveCantEat:  $cantEat")
 
             viewModelScope.launch {
-                val createdCantEat = cantEatRepository.createCantEat(cantEat)
-//                    TODO: is this needed?
-                cantEatRepository.insertCantEat(createdCantEat)
+                cantEatRepository.createCantEat(cantEat)
             }
             cantEatApiState = CantEatApiState.Success
 
@@ -60,7 +61,6 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
 
 
     }
-
 
     fun deleteCantEat(cantEat: CantEat) {
         viewModelScope.launch {
@@ -78,6 +78,7 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
 
     private fun getCantEatsFromRepo() {
         try {
+            cantEatApiState = CantEatApiState.Loading
             viewModelScope.launch { cantEatRepository.refresh() }
 
             uiListState = cantEatRepository.getCantEats().map { CantEatListState(it) }

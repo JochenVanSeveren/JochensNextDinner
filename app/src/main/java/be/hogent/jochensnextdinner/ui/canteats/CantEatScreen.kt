@@ -33,7 +33,7 @@ fun CantEatScreen(
         state = rememberSwipeRefreshState(isRefreshing = isRefreshing.value),
         onRefresh = {
             isRefreshing.value = true
-            // Your refresh logic here
+            cantEatViewModel.refresh();
             isRefreshing.value = false
         }
     ) {
@@ -41,7 +41,7 @@ fun CantEatScreen(
         Box(modifier = modifier) {
             when (cantEatApiState) {
                 is CantEatApiState.Loading -> Text("Loading...")
-                is CantEatApiState.Error -> Text("Couldn't load...")
+                is CantEatApiState.Error -> Text(cantEatApiState.message)
                 is CantEatApiState.Success -> {
                     LazyColumn {
                         item {

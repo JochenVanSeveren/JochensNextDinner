@@ -64,7 +64,7 @@ fun CantEatListItem(
             if (isEditing.value) {
                 Row {
                     IconButton(onClick = {
-                        Log.d("new name", name.value)
+                        Log.d("New name cant eat name", name.value)
                         onSave(cantEat.copy(name = name.value))
                         isEditing.value = false
                     }) {

@@ -1,5 +1,8 @@
 package be.hogent.jochensnextdinner.model
 
+import android.content.ContentValues.TAG
+import android.util.Log
+import be.hogent.jochensnextdinner.BuildConfig
 import be.hogent.jochensnextdinner.data.database.dbCantEat
 import be.hogent.jochensnextdinner.network.ApiCantEat
 
@@ -18,14 +21,17 @@ fun CantEat.asDbCantEat(): dbCantEat {
 }
 
 fun CantEat.asApiObject(): ApiCantEat {
+    Log.d(TAG, "asApiObject: $this")
     return if (this.serverId != null) {
         ApiCantEat(
             id = this.serverId,
             name = this.name,
+            authorId = BuildConfig.AUTHOR_ID,
         )
     } else {
         ApiCantEat(
             name = this.name,
+            authorId = BuildConfig.AUTHOR_ID,
         )
     }
 }

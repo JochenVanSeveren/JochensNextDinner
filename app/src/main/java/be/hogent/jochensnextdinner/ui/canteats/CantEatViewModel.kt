@@ -42,6 +42,7 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
 
     fun saveCantEat(cantEat: CantEat) {
         try {
+            cantEatApiState = CantEatApiState.Loading
             val errorMessage = validateInput(cantEat)
             if (errorMessage != null) {
                 cantEatApiState = CantEatApiState.Error(errorMessage)

@@ -1,6 +1,8 @@
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,11 +39,20 @@ fun CantEatScreen(
             isRefreshing.value = false
         }
     ) {
-
         Box(modifier = modifier) {
             when (cantEatApiState) {
                 is CantEatApiState.Loading -> Text("Loading...")
-                is CantEatApiState.Error -> Text(cantEatApiState.message)
+                is CantEatApiState.Error -> {
+                    Column {
+                        Text(cantEatApiState.message)
+                        Button(onClick = {
+                            cantEatViewModel.refresh()
+                        }) {
+                            Text("Try Again")
+                        }
+                    }
+                }
+
                 is CantEatApiState.Success -> {
                     LazyColumn {
                         item {

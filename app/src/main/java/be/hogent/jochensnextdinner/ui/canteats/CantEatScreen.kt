@@ -2,13 +2,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import be.hogent.jochensnextdinner.model.CantEat
@@ -23,13 +31,11 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 fun CantEatScreen(
     modifier: Modifier = Modifier,
     cantEatViewModel: CantEatViewModel = viewModel(factory = CantEatViewModel.Factory),
-    isAddNewVisible: Boolean = false,
-    addNewVisibleReset: () -> Unit = {},
 ) {
     val cantEatListState by cantEatViewModel.uiListState.collectAsState()
     val isRefreshing = remember { mutableStateOf(false) }
-
     val cantEatApiState = cantEatViewModel.cantEatApiState
+    val listState = rememberLazyListState()
 
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = isRefreshing.value),
@@ -54,31 +60,46 @@ fun CantEatScreen(
                 }
 
                 is CantEatApiState.Success -> {
-                    LazyColumn {
+                    LazyColumn(state = listState) {
                         item {
-                            if (isAddNewVisible) {
+                            if (cantEatListState.cantEatList.isEmpty() && cantEatViewModel.addNewVisible.value) {
                                 CantEatListItem(
                                     cantEat = CantEat(name = ""),
                                     onSave = { cantEat -> cantEatViewModel.saveCantEat(cantEat) },
                                     onDelete = { cantEat -> cantEatViewModel.deleteCantEat(cantEat) },
-                                    addNewVisibleReset = addNewVisibleReset
                                 )
                             }
                         }
                         items(cantEatListState.cantEatList) { cantEat ->
                             CantEatListItem(
                                 cantEat = cantEat,
-                                onSave = { cantEat -> cantEatViewModel.saveCantEat(cantEat) },
-                                onDelete = { cantEat -> cantEatViewModel.deleteCantEat(cantEat) },
-                                addNewVisibleReset = addNewVisibleReset
+                                onSave = { cantEatViewModel.saveCantEat(it) },
+                                onDelete = { cantEatViewModel.deleteCantEat(it) },
                             )
                         }
                     }
 
                 }
             }
-
+            FloatingActionButton(
+                onClick = {
+//                TODO:
+//                listState.animateScrollToItem(0)
+                    cantEatViewModel.addNewVisible.value = true
+                },
+                modifier = Modifier.align(Alignment.BottomEnd),
+                containerColor = MaterialTheme.colorScheme.primary,
+                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
+            ) {
+                Icon(
+                    Icons.Filled.Add,
+                    "Add button",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         }
+
     }
+
 }
 

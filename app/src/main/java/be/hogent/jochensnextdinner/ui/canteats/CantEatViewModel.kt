@@ -31,7 +31,10 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
 
     lateinit var wifiWorkerState: StateFlow<WorkerState>
 
+    val addNewVisible = mutableStateOf(false)
+
     init {
+        refresh()
         getCantEatsFromRepo()
         Log.i("vm inspection", "CantEatViewModel init")
     }
@@ -81,7 +84,6 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
         try {
             cantEatApiState = CantEatApiState.Loading
             viewModelScope.launch { cantEatRepository.refresh() }
-
             uiListState = cantEatRepository.getCantEats().map { CantEatListState(it) }
                 .stateIn(
                     scope = viewModelScope,

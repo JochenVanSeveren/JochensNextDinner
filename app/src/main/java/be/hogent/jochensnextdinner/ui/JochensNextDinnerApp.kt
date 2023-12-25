@@ -3,20 +3,14 @@ package be.hogent.jochensnextdinner.ui
 import CantEatScreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +29,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -47,7 +40,6 @@ import be.hogent.jochensnextdinner.ui.screens.LikesScreen
 import be.hogent.jochensnextdinner.ui.screens.RecipesScreen
 import be.hogent.jochensnextdinner.ui.screens.StartScreen
 import be.hogent.jochensnextdinner.ui.theme.JochensNextDinnerTheme
-import be.hogent.jochensnextdinner.ui.canteats.CantEatViewModel
 
 enum class JochensNextDinnerScreen {
     Start,
@@ -72,9 +64,6 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
         JochensNextDinnerScreen.RecipeScreen.name -> context.getString(R.string.recipe_screen)
         else -> ""
     }
-
-    var isAddNewVisible by remember { mutableStateOf(false) }
-
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -129,25 +118,6 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
                     containerColor = MaterialTheme.colorScheme.tertiary,
                 )
             }
-        },
-        floatingActionButton = {
-            AnimatedVisibility(
-                visible = currentRoute != JochensNextDinnerScreen.Start.name,
-                enter = fadeIn(animationSpec = tween(durationMillis = 3500)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 500))
-            ) {
-                FloatingActionButton(
-                    onClick = { isAddNewVisible = !isAddNewVisible },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
-                ) {
-                    Icon(
-                        Icons.Filled.Add,
-                        "Add button",
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
         }
     ) {
         Surface(modifier = Modifier.padding(it), color = MaterialTheme.colorScheme.background) {
@@ -164,7 +134,7 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
                     )
                 }
                 composable(route = JochensNextDinnerScreen.CantEatScreen.name) {
-                    CantEatScreen(   isAddNewVisible   = isAddNewVisible ,addNewVisibleReset = { isAddNewVisible = false },        )
+                    CantEatScreen()
                 }
                 composable(route = JochensNextDinnerScreen.LikeScreen.name) {
                     LikesScreen()

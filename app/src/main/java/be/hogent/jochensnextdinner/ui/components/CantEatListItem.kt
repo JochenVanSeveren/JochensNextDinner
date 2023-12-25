@@ -64,9 +64,13 @@ fun CantEatListItem(
             if (isEditing.value) {
                 Row {
                     IconButton(onClick = {
-                        Log.d("New name cant eat name", name.value)
+                        Log.d("New cant eat name", name.value)
                         onSave(cantEat.copy(name = name.value))
-                        isEditing.value = false
+                        if (isNew) {
+                            addNewVisibleReset()
+                            name.value = ""
+                        }
+                        isEditing . value = false
                     }) {
                         Icon(
                             Icons.Filled.Check,
@@ -80,10 +84,16 @@ fun CantEatListItem(
                             addNewVisibleReset()
                         isEditing.value = false
                     }) {
-                        Icon(
-                            Icons.Filled.Delete,
-                            contentDescription = stringResource(id = R.string.delete)
-                        )
+                        if (isNew)
+                            Icon(
+                                Icons.Filled.Edit,
+                                contentDescription = stringResource(id = R.string.edit)
+                            )
+                        else
+                            Icon(
+                                Icons.Filled.Delete,
+                                contentDescription = stringResource(id = R.string.delete)
+                            )
                     }
                 }
             } else {

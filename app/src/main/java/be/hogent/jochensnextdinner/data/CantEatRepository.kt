@@ -12,7 +12,6 @@ import be.hogent.jochensnextdinner.model.asApiObject
 import be.hogent.jochensnextdinner.model.asDbCantEat
 import be.hogent.jochensnextdinner.network.CantEatApiService
 import be.hogent.jochensnextdinner.network.asDomainObject
-import be.hogent.jochensnextdinner.network.asDomainObjects
 import be.hogent.jochensnextdinner.network.deleteCantEatAsFlow
 import be.hogent.jochensnextdinner.network.getCantEatsAsFlow
 import be.hogent.jochensnextdinner.network.postCantEatAsFlow
@@ -20,7 +19,6 @@ import be.hogent.jochensnextdinner.network.putCantEatAsFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import java.net.SocketTimeoutException
 import java.util.UUID
 
@@ -44,10 +42,6 @@ class CachingCantEatRepository(
     override fun getCantEats(): Flow<List<CantEat>> {
         return cantEatDao.getAllItems().map {
             it.asDomainCantEats()
-        }.onEach {
-            if (it.isEmpty()) {
-                refresh()
-            }
         }
     }
 
@@ -92,11 +86,28 @@ class CachingCantEatRepository(
 //        wifiWorkInfo = workManager.getWorkInfoByIdFlow(request.id)
 
         try {
-            cantEatApiService.getCantEatsAsFlow().asDomainObjects().collect { value ->
-                for (cantEat in value) {
-                    Log.i("INSERT CANT EAT ON REFRESH", "refresh: $value")
-                    insertCantEat(cantEat)
+            // Fetch all items from the API
+            val apiCantEats =
+                cantEatApiService.getCantEatsAsFlow().first().map { it.asDomainObject() }
+
+            // Fetch all items from the local database
+            val dbCantEats = cantEatDao.getAllItems().first().asDomainCantEats()
+
+            // Find the items that are in the local database but not in the API
+            val itemsToDelete = dbCantEats.filter { dbCantEat ->
+                apiCantEats.none { apiCantEat ->
+                    apiCantEat.serverId == dbCantEat.serverId
                 }
+            }
+
+            // Delete these items from the local database
+            for (item in itemsToDelete) {
+                cantEatDao.delete(item.asDbCantEat())
+            }
+
+            // Insert or update the items from the API into the local database
+            for (cantEat in apiCantEats) {
+                cantEatDao.insert(cantEat.asDbCantEat())
             }
         } catch (e: SocketTimeoutException) {
             // log something

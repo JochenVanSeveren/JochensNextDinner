@@ -66,7 +66,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         CachingCantEatRepository(
             CantEatDb.getDatabase(context = context).cantEatDao(),
             retrofitService,
-            context
+//            context
         )
     }
 }

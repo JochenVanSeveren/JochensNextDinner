@@ -90,9 +90,6 @@ fun CantEatScreen(
                                             isAddingVisible.value = false
                                         },
                                         onDelete = {
-//                                            cantEatViewModel.deleteCantEat(
-//                                                cantEat
-//                                            )
                                             isAddingVisible.value = false
                                         },
                                     )

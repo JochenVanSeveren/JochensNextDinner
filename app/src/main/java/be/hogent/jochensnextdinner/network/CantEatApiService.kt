@@ -39,6 +39,7 @@ fun CantEatApiService.postCantEatAsFlow(cantEat: ApiCantEat): Flow<ApiCantEat> =
 
 fun CantEatApiService.putCantEatAsFlow(cantEat: ApiCantEat): Flow<ApiCantEat> = flow {
     try {
+        Log.d(TAG, "putCantEatAsFlow: $cantEat")
         emit(putCantEat(cantEat.id!!, cantEat))
     } catch (e: Exception) {
         Log.e("API", "putCantEatAsFlow: " + e.stackTraceToString())

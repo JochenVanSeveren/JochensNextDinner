@@ -1,10 +1,5 @@
 package be.hogent.jochensnextdinner.data
 
-import android.content.ContentValues.TAG
-import android.content.Context
-import android.util.Log
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
 import be.hogent.jochensnextdinner.data.database.CantEatDao
 import be.hogent.jochensnextdinner.data.database.asDomainCantEats
 import be.hogent.jochensnextdinner.model.CantEat
@@ -22,7 +17,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import java.net.SocketTimeoutException
-import java.util.UUID
 
 
 interface CantEatRepository {
@@ -38,7 +32,7 @@ interface CantEatRepository {
 class CachingCantEatRepository(
     private val cantEatDao: CantEatDao,
     private val cantEatApiService: CantEatApiService,
-    context: Context
+//    context: Context
 ) : CantEatRepository {
 
     override fun getCantEats(): Flow<List<CantEat>> {
@@ -57,7 +51,6 @@ class CachingCantEatRepository(
 
     override suspend fun createCantEat(cantEat: CantEat): CantEat {
         val apiCantEat = cantEat.asApiObject()
-        Log.d(TAG, "createCantEat:  $apiCantEat")
         val response = cantEatApiService.postCantEatAsFlow(apiCantEat).first()
         val createdCantEat = response.asDomainObject()
         cantEatDao.insert(createdCantEat.asDbCantEat())

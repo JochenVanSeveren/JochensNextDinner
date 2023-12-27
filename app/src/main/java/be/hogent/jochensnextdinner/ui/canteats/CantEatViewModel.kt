@@ -1,7 +1,5 @@
 package be.hogent.jochensnextdinner.ui.canteats
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,13 +12,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import be.hogent.jochensnextdinner.JndApplication
 import be.hogent.jochensnextdinner.data.CantEatRepository
 import be.hogent.jochensnextdinner.model.CantEat
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -66,24 +61,24 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
                 cantEatApiState = CantEatApiState.Error(errorMessage)
                 return
             }
-            // TODO: if cant eat is new, then set addNewVisible to false and reset the name
-            Log.d(TAG, "saveCantEat:  $cantEat")
-
             viewModelScope.launch {
                 cantEatRepository.createCantEat(cantEat)
             }
             cantEatApiState = CantEatApiState.Success
-
         } catch (e: IOException) {
             cantEatApiState = CantEatApiState.Error(e.message ?: "Unknown error")
         }
-
-
     }
 
     fun deleteCantEat(cantEat: CantEat) {
-        viewModelScope.launch {
-            cantEatRepository.deleteCantEat(cantEat)
+        try {
+            cantEatApiState = CantEatApiState.Loading
+            viewModelScope.launch {
+                cantEatRepository.deleteCantEat(cantEat)
+            }
+            cantEatApiState = CantEatApiState.Success
+        } catch (e: IOException) {
+            cantEatApiState = CantEatApiState.Error(e.message ?: "Unknown error")
         }
     }
 

@@ -1,5 +1,6 @@
 package be.hogent.jochensnextdinner.network
 
+import Like
 import be.hogent.jochensnextdinner.model.Like
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

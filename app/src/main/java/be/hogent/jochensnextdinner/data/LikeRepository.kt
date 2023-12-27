@@ -1,5 +1,6 @@
 package be.hogent.jochensnextdinner.data
 
+import Like
 import be.hogent.jochensnextdinner.data.database.LikeDao
 import be.hogent.jochensnextdinner.data.database.asDomainLikes
 import be.hogent.jochensnextdinner.model.Like

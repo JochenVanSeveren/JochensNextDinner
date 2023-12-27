@@ -1,5 +1,6 @@
 package be.hogent.jochensnextdinner.data
 
+import Recipe
 import be.hogent.jochensnextdinner.data.database.RecipeDao
 import be.hogent.jochensnextdinner.data.database.asDomainRecipes
 import be.hogent.jochensnextdinner.model.Recipe

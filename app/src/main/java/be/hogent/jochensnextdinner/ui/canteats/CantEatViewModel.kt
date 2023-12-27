@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -36,10 +35,10 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
 
     lateinit var wifiWorkerState: StateFlow<WorkerState>
 
-    val addNewVisible = uiState.value.isAddingVisible
-
     fun toggleAddNew() {
-        _uiState.update { it.copy(isAddingVisible = !it.isAddingVisible) }
+        _uiState.update {
+            it.copy(isAddingVisible = !_uiState.value.isAddingVisible)
+        }
     }
 
     init {
@@ -58,8 +57,6 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
             }
         }
     }
-
-
 
 
     fun saveCantEat(cantEat: CantEat) {

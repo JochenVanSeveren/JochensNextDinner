@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
@@ -30,7 +31,6 @@ fun CantEatListItem(
     cantEat: CantEat,
     onSave: (CantEat) -> Unit,
     onDelete: (CantEat) -> Unit,
-    addNewVisibleReset: () -> Unit = {},
 ) {
     val isNew = cantEat.name.isEmpty()
     val isEditing = remember { mutableStateOf(isNew) }
@@ -67,7 +67,6 @@ fun CantEatListItem(
                         Log.d("New cant eat name", name.value)
                         onSave(cantEat.copy(name = name.value))
                         if (isNew) {
-                            addNewVisibleReset()
                             name.value = ""
                         }
                         isEditing . value = false
@@ -81,13 +80,13 @@ fun CantEatListItem(
                         if (!isNew)
                             onDelete(cantEat)
                         else
-                            addNewVisibleReset()
+                            name.value = ""
                         isEditing.value = false
                     }) {
                         if (isNew)
                             Icon(
-                                Icons.Filled.Edit,
-                                contentDescription = stringResource(id = R.string.edit)
+                                Icons.Filled.Clear,
+                                contentDescription = stringResource(id = R.string.cancel)
                             )
                         else
                             Icon(

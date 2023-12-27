@@ -32,7 +32,7 @@ interface CantEatRepository {
     suspend fun deleteCantEat(cantEat: CantEat)
     suspend fun updateCantEat(cantEat: CantEat)
     suspend fun refresh()
-    var wifiWorkInfo: Flow<WorkInfo>
+//    var wifiWorkInfo: Flow<WorkInfo>
 }
 
 class CachingCantEatRepository(
@@ -65,8 +65,10 @@ class CachingCantEatRepository(
     }
 
     override suspend fun deleteCantEat(cantEat: CantEat) {
-        val apiCantEat = cantEat.asApiObject()
-        cantEatApiService.deleteCantEatAsFlow(apiCantEat.name).first()
+        if (cantEat.serverId != null) {
+            val apiCantEat = cantEat.asApiObject()
+            cantEatApiService.deleteCantEatAsFlow(apiCantEat.id!!).first()
+        }
         cantEatDao.delete(cantEat.asDbCantEat())
     }
 
@@ -76,10 +78,10 @@ class CachingCantEatRepository(
         cantEatDao.update(response.asDomainObject().asDbCantEat())
     }
 
-    private var workID = UUID(1, 2)
-    private val workManager = WorkManager.getInstance(context)
-    override var wifiWorkInfo: Flow<WorkInfo> =
-        workManager.getWorkInfoByIdFlow(workID)
+//    private var workID = UUID(1, 2)
+//    private val workManager = WorkManager.getInstance(context)
+//    override var wifiWorkInfo: Flow<WorkInfo> =
+//        workManager.getWorkInfoByIdFlow(workID)
 
     /**
      * Refreshes the local database with data fetched from the remote API.

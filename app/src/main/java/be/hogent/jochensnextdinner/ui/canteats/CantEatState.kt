@@ -3,9 +3,9 @@ package be.hogent.jochensnextdinner.ui.canteats
 import androidx.work.WorkInfo
 import be.hogent.jochensnextdinner.model.CantEat
 
-data class CantEatState(
-    val isAddingVisible: Boolean = false,
-)
+//data class CantEatState(
+//    val isAddingVisible: Boolean = false,
+//)
 
 data class CantEatListState(val cantEatList: List<CantEat> = listOf())
 

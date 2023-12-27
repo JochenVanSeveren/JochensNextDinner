@@ -25,25 +25,24 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 
 class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewModel() {
-    private val _uiState = MutableStateFlow(CantEatState())
-    val uiState: StateFlow<CantEatState> = _uiState.asStateFlow()
+//    private val _uiState = MutableStateFlow(CantEatState())
+//    val uiState: StateFlow<CantEatState> = _uiState.asStateFlow()
 
     lateinit var uiListState: StateFlow<CantEatListState>
 
     var cantEatApiState: CantEatApiState by mutableStateOf(CantEatApiState.Loading)
         private set
 
-    lateinit var wifiWorkerState: StateFlow<WorkerState>
+//    lateinit var wifiWorkerState: StateFlow<WorkerState>
 
-    fun toggleAddNew() {
-        _uiState.update {
-            it.copy(isAddingVisible = !_uiState.value.isAddingVisible)
-        }
-    }
+//    fun toggleAddNew() {
+//        _uiState.update {
+//            it.copy(isAddingVisible = !_uiState.value.isAddingVisible)
+//        }
+//    }
 
     init {
         getCantEatsFromRepo()
-        Log.i("vm inspection", "CantEatViewModel init")
     }
 
     fun refresh() {

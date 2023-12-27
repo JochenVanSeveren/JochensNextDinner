@@ -1,6 +1,4 @@
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,8 +18,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import be.hogent.jochensnextdinner.model.CantEat
 import be.hogent.jochensnextdinner.ui.canteats.CantEatApiState
@@ -29,7 +25,6 @@ import be.hogent.jochensnextdinner.ui.canteats.CantEatViewModel
 import be.hogent.jochensnextdinner.ui.components.CantEatListItem
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.launch
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -41,6 +36,7 @@ fun CantEatScreen(
     val isRefreshing = remember { mutableStateOf(false) }
     val cantEatApiState = cantEatViewModel.cantEatApiState
     val lazyListState = rememberLazyListState()
+    val isAddingVisible = mutableStateOf(false)
 
     Scaffold(floatingActionButton = {
         FloatingActionButton(
@@ -48,7 +44,8 @@ fun CantEatScreen(
 //                cantEatViewModel.viewModelScope.launch {
 //                    lazyListState.animateScrollToItem(0)
 //                }
-                cantEatViewModel.toggleAddNew()
+//                cantEatViewModel.toggleAddNew()
+                isAddingVisible.value = true
             },
             containerColor = MaterialTheme.colorScheme.primary,
             elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
@@ -68,7 +65,7 @@ fun CantEatScreen(
                 isRefreshing.value = false
             }
         ) {
-            Box{
+            Box {
                 when (cantEatApiState) {
                     is CantEatApiState.Loading -> Text("Loading...")
                     is CantEatApiState.Error -> {
@@ -83,17 +80,20 @@ fun CantEatScreen(
                     }
 
                     is CantEatApiState.Success -> {
-                        Log.i(TAG, "CantEatScreen: ${cantEatViewModel.uiState.value.isAddingVisible}")
                         LazyColumn(state = lazyListState) {
                             item {
-                                if (cantEatListState.cantEatList.isEmpty() && cantEatViewModel.uiState.value.isAddingVisible) {
+                                if (cantEatListState.cantEatList.isEmpty() || isAddingVisible.value) {
                                     CantEatListItem(
                                         cantEat = CantEat(name = ""),
-                                        onSave = { cantEat -> cantEatViewModel.saveCantEat(cantEat) },
-                                        onDelete = { cantEat ->
-                                            cantEatViewModel.deleteCantEat(
-                                                cantEat
-                                            )
+                                        onSave = { cantEat ->
+                                            cantEatViewModel.saveCantEat(cantEat)
+                                            isAddingVisible.value = false
+                                        },
+                                        onDelete = {
+//                                            cantEatViewModel.deleteCantEat(
+//                                                cantEat
+//                                            )
+                                            isAddingVisible.value = false
                                         },
                                     )
                                 }

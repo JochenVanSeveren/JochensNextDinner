@@ -62,7 +62,8 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
                 return
             }
             viewModelScope.launch {
-                cantEatRepository.createCantEat(cantEat)
+                cantEatRepository.saveCantEat(cantEat)
+                getCantEatsFromRepo()
             }
             cantEatApiState = CantEatApiState.Success
         } catch (e: IOException) {

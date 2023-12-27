@@ -22,7 +22,7 @@ import java.net.SocketTimeoutException
 interface CantEatRepository {
     fun getCantEats(): Flow<List<CantEat>>
     suspend fun insertCantEat(cantEat: CantEat)
-    suspend fun createCantEat(cantEat: CantEat): CantEat
+    suspend fun saveCantEat(cantEat: CantEat): CantEat
     suspend fun deleteCantEat(cantEat: CantEat)
     suspend fun updateCantEat(cantEat: CantEat)
     suspend fun refresh()
@@ -49,9 +49,12 @@ class CachingCantEatRepository(
         cantEatDao.insert(cantEat.asDbCantEat())
     }
 
-    override suspend fun createCantEat(cantEat: CantEat): CantEat {
+    override suspend fun saveCantEat(cantEat: CantEat): CantEat {
         val apiCantEat = cantEat.asApiObject()
-        val response = cantEatApiService.postCantEatAsFlow(apiCantEat).first()
+        val response = if (cantEat.serverId != null)
+            cantEatApiService.putCantEatAsFlow(apiCantEat).first()
+        else
+            cantEatApiService.postCantEatAsFlow(apiCantEat).first()
         val createdCantEat = response.asDomainObject()
         cantEatDao.insert(createdCantEat.asDbCantEat())
         return createdCantEat

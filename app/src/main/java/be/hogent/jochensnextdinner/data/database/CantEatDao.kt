@@ -18,6 +18,8 @@ interface CantEatDao {
 
     @Delete
     suspend fun delete(item: dbCantEat)
+//    @Query("DELETE FROM cantEats")
+//    suspend fun deleteAll()
 
     @Query("SELECT * from cantEats WHERE name = :name")
     fun getItem(name: String): Flow<dbCantEat>

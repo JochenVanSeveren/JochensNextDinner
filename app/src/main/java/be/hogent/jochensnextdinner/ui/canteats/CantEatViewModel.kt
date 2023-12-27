@@ -14,15 +14,20 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import be.hogent.jochensnextdinner.JndApplication
 import be.hogent.jochensnextdinner.data.CantEatRepository
 import be.hogent.jochensnextdinner.model.CantEat
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 
 class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewModel() {
-//    private val _uiState = MutableStateFlow(CantEatState())
+    private val _uiState = MutableStateFlow(CantEatState())
+    val uiState: StateFlow<CantEatState> = _uiState.asStateFlow()
 
     lateinit var uiListState: StateFlow<CantEatListState>
 
@@ -31,17 +36,31 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
 
     lateinit var wifiWorkerState: StateFlow<WorkerState>
 
-    val addNewVisible = mutableStateOf(false)
+    val addNewVisible = uiState.value.isAddingVisible
+
+    fun toggleAddNew() {
+        _uiState.update { it.copy(isAddingVisible = !it.isAddingVisible) }
+    }
 
     init {
-        refresh()
         getCantEatsFromRepo()
         Log.i("vm inspection", "CantEatViewModel init")
     }
 
     fun refresh() {
-        getCantEatsFromRepo()
+        viewModelScope.launch {
+            try {
+                cantEatApiState = CantEatApiState.Loading
+                cantEatRepository.refresh()
+                cantEatApiState = CantEatApiState.Success
+            } catch (e: Exception) {
+                cantEatApiState = CantEatApiState.Error(e.localizedMessage ?: "Unknown error")
+            }
+        }
     }
+
+
+
 
     fun saveCantEat(cantEat: CantEat) {
         try {
@@ -83,7 +102,6 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
     private fun getCantEatsFromRepo() {
         try {
             cantEatApiState = CantEatApiState.Loading
-            viewModelScope.launch { cantEatRepository.refresh() }
             uiListState = cantEatRepository.getCantEats().map { CantEatListState(it) }
                 .stateIn(
                     scope = viewModelScope,
@@ -92,11 +110,11 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
                 )
             cantEatApiState = CantEatApiState.Success
 
-            wifiWorkerState = cantEatRepository.wifiWorkInfo.map { WorkerState(it) }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = WorkerState(),
-            )
+//            wifiWorkerState = cantEatRepository.wifiWorkInfo.map { WorkerState(it) }.stateIn(
+//                scope = viewModelScope,
+//                started = SharingStarted.WhileSubscribed(5_000L),
+//                initialValue = WorkerState(),
+//            )
         } catch (e: IOException) {
             cantEatApiState = CantEatApiState.Error(e.message ?: "Unknown error")
         }

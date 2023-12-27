@@ -62,7 +62,7 @@ fun CantEatScreen(
                 is CantEatApiState.Success -> {
                     LazyColumn(state = listState) {
                         item {
-                            if (cantEatListState.cantEatList.isEmpty() && cantEatViewModel.addNewVisible.value) {
+                            if (cantEatListState.cantEatList.isEmpty() && cantEatViewModel.addNewVisible) {
                                 CantEatListItem(
                                     cantEat = CantEat(name = ""),
                                     onSave = { cantEat -> cantEatViewModel.saveCantEat(cantEat) },
@@ -85,7 +85,7 @@ fun CantEatScreen(
                 onClick = {
 //                TODO:
 //                listState.animateScrollToItem(0)
-                    cantEatViewModel.addNewVisible.value = true
+                    cantEatViewModel.toggleAddNew()
                 },
                 modifier = Modifier.align(Alignment.BottomEnd),
                 containerColor = MaterialTheme.colorScheme.primary,

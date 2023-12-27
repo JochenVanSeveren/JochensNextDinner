@@ -12,14 +12,15 @@ import be.hogent.jochensnextdinner.model.asApiObject
 import be.hogent.jochensnextdinner.model.asDbCantEat
 import be.hogent.jochensnextdinner.network.CantEatApiService
 import be.hogent.jochensnextdinner.network.asDomainObject
+import be.hogent.jochensnextdinner.network.asDomainObjects
 import be.hogent.jochensnextdinner.network.deleteCantEatAsFlow
 import be.hogent.jochensnextdinner.network.getCantEatsAsFlow
 import be.hogent.jochensnextdinner.network.postCantEatAsFlow
 import be.hogent.jochensnextdinner.network.putCantEatAsFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import java.net.SocketTimeoutException
 import java.util.UUID
 
@@ -43,6 +44,10 @@ class CachingCantEatRepository(
     override fun getCantEats(): Flow<List<CantEat>> {
         return cantEatDao.getAllItems().map {
             it.asDomainCantEats()
+        }.onEach { cantEats ->
+            if (cantEats.isEmpty()) {
+                refresh()
+            }
         }
     }
 
@@ -76,8 +81,21 @@ class CachingCantEatRepository(
     override var wifiWorkInfo: Flow<WorkInfo> =
         workManager.getWorkInfoByIdFlow(workID)
 
+    /**
+     * Refreshes the local database with data fetched from the remote API.
+     *
+     * This function performs the following steps:
+     * 1. Fetches all items from the local database.
+     * 2. Fetches all items from the remote API.
+     * 3. Compares the local and remote items:
+     *    - If an item is present in the local database but not in the remote, it is deleted from the local database.
+     *    - If an item is present in the remote but not in the local database, it is added to the local database.
+     *    - If an item is present in both the local database and the remote, the local item is updated with the data from the remote.
+     *
+     * @throws SocketTimeoutException If a timeout occurs while fetching data from the remote API.
+     */
     override suspend fun refresh() {
-//        val constraints =
+        //        val constraints =
 //            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
 //                .build()
 //        val requestBuilder = OneTimeWorkRequestBuilder<WifiNotificationWorker>()
@@ -85,16 +103,11 @@ class CachingCantEatRepository(
 //        workManager.enqueue(request)
 //        workID = request.id
 //        wifiWorkInfo = workManager.getWorkInfoByIdFlow(request.id)
-
         try {
             // Fetch all items from the API
-            val apiCantEats = cantEatApiService.getCantEatsAsFlow().firstOrNull()?.map { it.asDomainObject() }
+            val dbCantEats = cantEatDao.getAllItems().first().asDomainCantEats()
 
-            if (apiCantEats != null) {
-                // Fetch all items from the local database
-                val dbCantEats = cantEatDao.getAllItems().first().asDomainCantEats()
-
-                // Find the items that are in the local database but not in the API
+            cantEatApiService.getCantEatsAsFlow().asDomainObjects().collect { apiCantEats ->
                 val itemsToDelete = dbCantEats.filter { dbCantEat ->
                     apiCantEats.none { apiCantEat ->
                         apiCantEat.serverId == dbCantEat.serverId

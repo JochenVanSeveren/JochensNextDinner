@@ -3,22 +3,24 @@ package be.hogent.jochensnextdinner.data.database
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import be.hogent.jochensnextdinner.model.CantEat
+import be.hogent.jochensnextdinner.model.Like
 
-@Entity(tableName = "cantEats", indices = [Index(value = ["serverId"], unique = true)])
-data class dbCantEat(
+@Entity(tableName = "likes", indices = [Index(value = ["serverId"], unique = true)])
+data class dbLike(
     @PrimaryKey(autoGenerate = true)
     val localId: Long,
     val serverId: String? = null,
     val name: String,
+    val category: String,
 )
 
-fun List<dbCantEat>.asDomainCantEats(): List<CantEat> {
+fun List<dbLike>.asDomainLikes(): List<Like> {
     return this.map {
-        CantEat(
+        Like(
             localId = it.localId,
             serverId = it.serverId,
             name = it.name,
+            category = it.category,
         )
     }
 }

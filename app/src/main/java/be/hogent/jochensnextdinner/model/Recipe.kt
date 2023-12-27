@@ -1,7 +1,12 @@
 package be.hogent.jochensnextdinner.model
 
+import be.hogent.jochensnextdinner.BuildConfig
+import be.hogent.jochensnextdinner.data.database.dbRecipe
+import be.hogent.jochensnextdinner.network.ApiRecipe
+
 data class Recipe(
-    val id: String,
+    val localId: Long = 0,
+    val serverId: String? = null,
     val slug: String,
     val title: String,
     val ingredients: List<String>,
@@ -9,7 +14,45 @@ data class Recipe(
     val herbs: List<String>,
     val steps: List<String>,
     val image: String?,
-    val authorId: String,
-    val createdAt: String,  // Assuming ISO 8601 format
-    val updatedAt: String
-)
+) {
+    fun asDbRecipe(): dbRecipe {
+        return dbRecipe(
+            localId = this.localId,
+            serverId = this.serverId,
+            slug = this.slug,
+            title = this.title,
+            ingredients = this.ingredients,
+            optionalIngredients = this.optionalIngredients,
+            herbs = this.herbs,
+            steps = this.steps,
+            image = this.image
+        )
+    }
+
+    fun asApiObject(): ApiRecipe {
+        return if (this.serverId != null) {
+            ApiRecipe(
+                id = this.serverId,
+                slug = this.slug,
+                title = this.title,
+                ingredients = this.ingredients,
+                optionalIngredients = this.optionalIngredients,
+                herbs = this.herbs,
+                steps = this.steps,
+                image = this.image,
+                authorId = BuildConfig.AUTHOR_ID,
+            )
+        } else {
+            ApiRecipe(
+                slug = this.slug,
+                title = this.title,
+                ingredients = this.ingredients,
+                optionalIngredients = this.optionalIngredients,
+                herbs = this.herbs,
+                steps = this.steps,
+                image = this.image,
+                authorId = BuildConfig.AUTHOR_ID,
+            )
+        }
+    }
+}

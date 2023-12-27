@@ -22,16 +22,17 @@ class NavigationTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
-    /*Test nav host not working*/
-    private lateinit var navController : NavHostController
 
-@Before
-fun setup() {
-    composeTestRule.setContent {
-        navController = rememberNavController()
-        JochensNextDinnerApp(navController)
+    /*Test nav host not working*/
+    private lateinit var navController: NavHostController
+
+    @Before
+    fun setup() {
+        composeTestRule.setContent {
+            navController = rememberNavController()
+            JochensNextDinnerApp(navController)
+        }
     }
-}
 
     @Test
     fun navigateToCantEatScreen() {
@@ -58,8 +59,7 @@ fun setup() {
     }
 
     @Test
-    fun navigateBackToStartScreen()
-    {
+    fun navigateBackToStartScreen() {
         composeTestRule.onNodeWithContentDescription(getResourceString(R.string.navigate_to_cant_eat_screen))
             .performClick()
         composeTestRule.onNodeWithContentDescription(getResourceString(R.string.navigate_up))

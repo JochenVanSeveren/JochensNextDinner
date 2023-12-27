@@ -3,9 +3,11 @@ package be.hogent.jochensnextdinner.data
 import android.content.Context
 import android.util.Log
 import be.hogent.jochensnextdinner.BuildConfig
-import be.hogent.jochensnextdinner.data.database.CantEatDb
+import be.hogent.jochensnextdinner.data.database.JndDb
 import be.hogent.jochensnextdinner.network.CantEatApiService
+import be.hogent.jochensnextdinner.network.LikeApiService
 import be.hogent.jochensnextdinner.network.NetworkConnectionInterceptor
+import be.hogent.jochensnextdinner.network.RecipeApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -21,8 +23,8 @@ import java.lang.reflect.Type
 
 interface AppContainer {
     val cantEatRepository: CantEatRepository
-    //val likesRepository: LikesRepository
-    //val recipceRepository: RecipceRepository
+    val likeRepository: LikeRepository
+    val recipeRepository: RecipeRepository
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -58,14 +60,38 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         .baseUrl(baseUrl)
         .build()
 
-    private val retrofitService: CantEatApiService by lazy {
+    private val cantEatRetrofitService: CantEatApiService by lazy {
         retrofit.create(CantEatApiService::class.java)
+    }
+
+    private val likeRetrofitService: LikeApiService by lazy {
+        retrofit.create(LikeApiService::class.java)
+    }
+
+    private val recipeRetrofitService: RecipeApiService by lazy {
+        retrofit.create(RecipeApiService::class.java)
     }
 
     override val cantEatRepository: CantEatRepository by lazy {
         CachingCantEatRepository(
-            CantEatDb.getDatabase(context = context).cantEatDao(),
-            retrofitService,
+            JndDb.getDatabase(context = context).cantEatDao(),
+            cantEatRetrofitService,
+//            context
+        )
+    }
+
+    override val likeRepository: LikeRepository by lazy {
+        CachingLikeRepository(
+            JndDb.getDatabase(context = context).likeDao(),
+            likeRetrofitService,
+//            context
+        )
+    }
+
+    override val recipeRepository: RecipeRepository by lazy {
+        CachingRecipeRepository(
+            JndDb.getDatabase(context = context).recipeDao(),
+            recipeRetrofitService,
 //            context
         )
     }

@@ -1,6 +1,7 @@
 package be.hogent.jochensnextdinner.ui
 
 import CantEatScreen
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
@@ -26,14 +27,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import be.hogent.jochensnextdinner.R
+import be.hogent.jochensnextdinner.model.Recipe
 import be.hogent.jochensnextdinner.ui.components.TopBar
 import be.hogent.jochensnextdinner.ui.likes.LikesScreen
+import be.hogent.jochensnextdinner.ui.recipes.RecipeViewModel
+import be.hogent.jochensnextdinner.ui.recipes.detail.RecipeDetailScreen
 import be.hogent.jochensnextdinner.ui.recipes.RecipesScreen
 import be.hogent.jochensnextdinner.ui.screens.StartScreen
 import be.hogent.jochensnextdinner.ui.theme.JochensNextDinnerTheme
@@ -42,7 +47,8 @@ enum class JochensNextDinnerScreen {
     Start,
     CantEatScreen,
     LikeScreen,
-    RecipeScreen
+    RecipeScreen,
+    RecipeDetailScreen
 }
 
 /*TODO: feed toevoegen */
@@ -142,7 +148,17 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
                     LikesScreen()
                 }
                 composable(route = JochensNextDinnerScreen.RecipeScreen.name) {
-                    RecipesScreen()
+                    RecipesScreen(onRecipeClick = { localId: Long ->
+                        navController.navigate("RecipeDetailScreen/${localId}")
+                    })
+                }
+                composable("RecipeDetailScreen/{recipeId}") { backStackEntry ->
+                    val recipeId = backStackEntry.arguments?.getString("recipeId")?.toLongOrNull()
+                    //TODO: do smth else when null
+                    Log.d("RECIPE NAV", "JochensNextDinnerApp: recipeId: $recipeId")
+                    if (recipeId != null) {
+                        RecipeDetailScreen(recipeId = recipeId)
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
 package be.hogent.jochensnextdinner.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,8 +22,8 @@ import coil.compose.AsyncImage
 @Composable
 fun RecipeListItem(
     recipe: Recipe,
+    onRecipeClick: (Recipe) -> Unit
 ) {
-
     Column {
         Text(
             text = recipe.title,
@@ -41,11 +42,19 @@ fun RecipeListItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(8.dp))
-
+                    .clickable { onRecipeClick(recipe) }
             )
         }
     }
-
-
 }
 
+//AsyncImage(
+//model = ImageRequest.Builder(context = LocalContext.current).data(photo.imgSrc)
+//.crossfade(true).build(),
+//error = painterResource(R.drawable.ic_broken_image),
+//placeholder = painterResource(R.drawable.loading_img),
+//contentDescription = stringResource(R.string.mars_photo),
+//contentScale = ContentScale.Crop,
+//modifier = Modifier.fillMaxWidth()
+//)
+// TODO: add error and other states

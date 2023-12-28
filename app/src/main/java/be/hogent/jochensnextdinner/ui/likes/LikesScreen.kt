@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -24,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,77 +54,82 @@ fun LikesScreen(
             likeViewModel.refresh()
             isRefreshing.value = false
         }
-    ) {    Box(modifier = Modifier.fillMaxSize()) {
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
 
-    Scaffold(floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    isAddingVisible.value = true
-                },
-                containerColor = MaterialTheme.colorScheme.primary,
-                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
-            ) {
-                Icon(
-                    Icons.Filled.Add,
-                    "Add button",
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        }) {
-            when (likeApiState) {
-                is LikeApiState.Loading -> Text("Loading...")
-                is LikeApiState.Error -> {
-                    Column {
-                        Text(likeApiState.message)
-                        Button(onClick = {
-                            likeViewModel.refresh()
-                        }) {
-                            Text("Try Again")
+            Scaffold(floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        isAddingVisible.value = true
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
+                ) {
+                    Icon(
+                        Icons.Filled.Add,
+                        "Add button",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }) {
+                when (likeApiState) {
+                    is LikeApiState.Loading -> Box(modifier = Modifier.fillMaxSize()) {
+                        CircularProgressIndicator(Modifier.align(Alignment.Center))
+                    }
+
+                    is LikeApiState.Error -> {
+                        Column {
+                            Text(likeApiState.message)
+                            Button(onClick = {
+                                likeViewModel.refresh()
+                            }) {
+                                Text("Try Again")
+                            }
+                        }
+                    }
+
+                    is LikeApiState.Success -> {
+                        LazyColumn(state = lazyListState) {
+                            val groupedLikes = likeListState.likeList.groupBy { it.category }
+                            item {
+                                if (likeListState.likeList.isEmpty() || isAddingVisible.value) {
+                                    LikeListItem(
+                                        like = Like(name = "", category = ""),
+                                        onSave = { like ->
+                                            likeViewModel.saveLike(like)
+                                            isAddingVisible.value = false
+                                        },
+                                        onDelete = {
+                                            isAddingVisible.value = false
+                                        },
+                                    )
+                                }
+                            }
+                            groupedLikes.forEach { (category, likes) ->
+                                stickyHeader {
+                                    Text(
+                                        text = category,
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                items(likes.size) { index ->
+                                    LikeListItem(
+                                        like = likes[index],
+                                        onSave = { likeViewModel.saveLike(it) },
+                                        onDelete = { likeViewModel.deleteLike(it) },
+                                    )
+                                }
+                            }
+                            item {
+                                Spacer(modifier = Modifier.height(80.dp))
+                            }
                         }
                     }
                 }
 
-                is LikeApiState.Success -> {
-                    LazyColumn(state = lazyListState) {
-                        val groupedLikes = likeListState.likeList.groupBy { it.category }
-                        item {
-                            if (likeListState.likeList.isEmpty() || isAddingVisible.value) {
-                                LikeListItem(
-                                    like = Like(name = "", category = ""),
-                                    onSave = { like ->
-                                        likeViewModel.saveLike(like)
-                                        isAddingVisible.value = false
-                                    },
-                                    onDelete = {
-                                        isAddingVisible.value = false
-                                    },
-                                )
-                            }
-                        }
-                        groupedLikes.forEach { (category, likes) ->
-                            stickyHeader {
-                                Text(
-                                    text = category,
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            items(likes.size) { index ->
-                                LikeListItem(
-                                    like = likes[index],
-                                    onSave = { likeViewModel.saveLike(it) },
-                                    onDelete = { likeViewModel.deleteLike(it) },
-                                )
-                            }
-                        }
-                        item {
-                            Spacer(modifier = Modifier.height(80.dp))
-                        }
-                    }
-                }
             }
-
-        } }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package be.hogent.jochensnextdinner.data
 
 import be.hogent.jochensnextdinner.data.database.RecipeDao
+import be.hogent.jochensnextdinner.data.database.asDomainObject
 import be.hogent.jochensnextdinner.data.database.asDomainRecipes
 import be.hogent.jochensnextdinner.model.Recipe
 import be.hogent.jochensnextdinner.network.RecipeApiService
@@ -18,6 +19,7 @@ import java.net.SocketTimeoutException
 
 interface RecipeRepository {
     fun getRecipes(): Flow<List<Recipe>>
+    fun getRecipe(id: Long): Flow<Recipe?>
     suspend fun insertRecipe(recipe: Recipe)
     suspend fun saveRecipe(recipe: Recipe): Recipe
     suspend fun deleteRecipe(recipe: Recipe)
@@ -37,6 +39,12 @@ class CachingRecipeRepository(
             if (recipes.isEmpty()) {
                 refresh()
             }
+        }
+    }
+
+    override fun getRecipe(id: Long): Flow<Recipe?> {
+        return recipeDao.getItem(id).map {
+            it.asDomainObject()
         }
     }
 

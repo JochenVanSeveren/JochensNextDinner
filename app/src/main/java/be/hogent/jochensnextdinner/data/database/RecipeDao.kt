@@ -19,8 +19,8 @@ interface RecipeDao {
     @Delete
     suspend fun delete(item: dbRecipe)
 
-    @Query("SELECT * from recipes WHERE slug = :slug")
-    fun getItem(slug: String): Flow<dbRecipe>
+    @Query("SELECT * from recipes WHERE localId = :id")
+    fun getItem(id: Long): Flow<dbRecipe>
 
     @Query("SELECT * from recipes ORDER BY title ASC")
     fun getAllItems(): Flow<List<dbRecipe>>

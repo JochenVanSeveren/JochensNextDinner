@@ -37,3 +37,17 @@ fun List<dbRecipe>.asDomainRecipes(): List<Recipe> {
         )
     }
 }
+
+fun dbRecipe.asDomainObject(): Recipe {
+    return Recipe(
+        localId = this.localId,
+        serverId = this.serverId,
+        slug = this.slug,
+        title = this.title,
+        ingredients = this.ingredients,
+        optionalIngredients = this.optionalIngredients,
+        herbs = this.herbs,
+        steps = this.steps,
+        image = this.image,
+    )
+}

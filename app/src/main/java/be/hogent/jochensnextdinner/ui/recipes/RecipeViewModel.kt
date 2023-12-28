@@ -22,7 +22,6 @@ class RecipeViewModel(private val recipeRepository: RecipeRepository) : ViewMode
 
     lateinit var uiListState: StateFlow<RecipeListState>
 
-
     var recipeApiState: RecipeApiState by mutableStateOf(RecipeApiState.Loading)
         private set
 

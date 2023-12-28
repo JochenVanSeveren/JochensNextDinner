@@ -106,7 +106,7 @@ fun LikesScreen(
                                 }
                             }
                             groupedLikes.forEach { (category, likes) ->
-                                stickyHeader {
+                                item {
                                     Text(
                                         text = category,
                                         style = MaterialTheme.typography.headlineSmall,

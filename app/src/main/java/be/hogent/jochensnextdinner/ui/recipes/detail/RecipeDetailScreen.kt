@@ -30,6 +30,7 @@ fun RecipeDetailScreen(
     recipeDetailViewModel: RecipeDetailViewModel = viewModel(factory = RecipeDetailViewModel.Factory),
     recipeId: Long
 ) {
+    // TODO: bug not seeing a second recipe
     LaunchedEffect(recipeId) {
         recipeDetailViewModel.getRecipeDetail(recipeId)
     }
@@ -42,20 +43,14 @@ fun RecipeDetailScreen(
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
             }
         }
+
         is RecipeApiState.Error -> {
             Text(text = recipeApiState.message)
         }
+
         is RecipeApiState.Success -> {
             recipe?.let {
                 Column {
-                    Text(
-                        text = it.title,
-                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        textAlign = TextAlign.Center
-                    )
                     it.image?.let { image ->
                         AsyncImage(
                             model = "${BuildConfig.CLOUDINARY_BASE_URL}${image}",
@@ -66,21 +61,57 @@ fun RecipeDetailScreen(
                                 .clip(RoundedCornerShape(8.dp))
                         )
                     }
-                    Text(text = "Ingredients", style = MaterialTheme.typography.labelLarge)
+                    Text(
+                        text = "Ingredients",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        textAlign = TextAlign.Center
+                    )
                     it.ingredients.forEach { ingredient ->
                         Text(text = ingredient, style = MaterialTheme.typography.bodyMedium)
                     }
-                    Text(text = "Optional Ingredients", style = MaterialTheme.typography.labelLarge)
-                    it.optionalIngredients.forEach { optionalIngredient ->
-                        Text(text = optionalIngredient, style = MaterialTheme.typography.bodyMedium)
+                    if (it.optionalIngredients.isNotEmpty()) {
+                        Text(
+                            text = "Optional Ingredients",
+                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            textAlign = TextAlign.Center
+                        )
+                        it.optionalIngredients.forEach { optionalIngredient ->
+                            Text(
+                                text = optionalIngredient,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
                     }
-                    Text(text = "Herbs", style = MaterialTheme.typography.labelLarge)
+                    Text(
+                        text = "Herbs",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        textAlign = TextAlign.Center
+                    )
                     it.herbs.forEach { herb ->
                         Text(text = herb, style = MaterialTheme.typography.bodyMedium)
                     }
-                    Text(text = "Steps", style = MaterialTheme.typography.labelLarge)
+                    Text(
+                        text = "Steps",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        textAlign = TextAlign.Center
+                    )
                     it.steps.forEachIndexed { index, step ->
-                        Text(text = "${index + 1}. $step", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            text = "${index + 1}. $step",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 }
             }

@@ -23,7 +23,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @Composable
 fun RecipesScreen(
     recipeViewModel: RecipeViewModel = viewModel(factory = RecipeViewModel.Factory),
-    onRecipeClick: (Long) -> Unit
+    onRecipeClick: (Long, String) -> Unit
 ) {
     val recipeListState by recipeViewModel.uiListState.collectAsState()
     val recipeApiState = recipeViewModel.recipeApiState
@@ -58,7 +58,7 @@ fun RecipesScreen(
                     items(recipeListState.recipeList) { recipe ->
                         RecipeListItem(
                             recipe = recipe,
-                            onRecipeClick = { onRecipeClick(it.localId) }
+                            onRecipeClick = { onRecipeClick(it.localId, it.title) }
                         )
                     }
                 }

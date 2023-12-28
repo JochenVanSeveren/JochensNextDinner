@@ -25,13 +25,11 @@ class RecipeDetailViewModel(private val recipeRepository: RecipeRepository) : Vi
     var recipeApiState: RecipeApiState by mutableStateOf(RecipeApiState.Loading)
         private set
 
-    fun getRecipeDetail(recipeId: Long) {
+    suspend fun getRecipeDetail(recipeId: Long) {  
         try {
             recipeApiState = RecipeApiState.Loading
-            viewModelScope.launch {
-                val recipe = recipeRepository.getRecipe(recipeId).first()
-                _recipe.value = recipe
-            }
+            val recipe = recipeRepository.getRecipe(recipeId).first()
+            _recipe.value = recipe
             recipeApiState = RecipeApiState.Success
         } catch (e: Exception) {
             recipeApiState = RecipeApiState.Error(e.localizedMessage ?: "Unknown error")

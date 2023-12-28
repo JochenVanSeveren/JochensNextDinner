@@ -15,7 +15,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.ui.components.RecipeListItem
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -54,12 +56,21 @@ fun RecipesScreen(
                     isRefreshing.value = false
                 }
             ) {
-                LazyColumn() {
-                    items(recipeListState.recipeList) { recipe ->
-                        RecipeListItem(
-                            recipe = recipe,
-                            onRecipeClick = { onRecipeClick(it.localId, it.title) }
+                if (recipeListState.recipeList.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Text(
+                            text = stringResource(R.string.no_recipes_found),
+                            modifier = Modifier.align(Alignment.Center)
                         )
+                    }
+                } else {
+                    LazyColumn() {
+                        items(recipeListState.recipeList) { recipe ->
+                            RecipeListItem(
+                                recipe = recipe,
+                                onRecipeClick = { onRecipeClick(it.localId, it.title) }
+                            )
+                        }
                     }
                 }
             }

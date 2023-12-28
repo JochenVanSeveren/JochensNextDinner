@@ -1,5 +1,6 @@
 package be.hogent.jochensnextdinner.ui.recipes.detail
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +31,6 @@ fun RecipeDetailScreen(
     recipeDetailViewModel: RecipeDetailViewModel = viewModel(factory = RecipeDetailViewModel.Factory),
     recipeId: Long
 ) {
-    // TODO: bug not seeing a second recipe
     LaunchedEffect(recipeId) {
         recipeDetailViewModel.getRecipeDetail(recipeId)
     }

@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import be.hogent.jochensnextdinner.BuildConfig
@@ -44,20 +48,39 @@ fun RecipeDetailScreen(
         is RecipeApiState.Success -> {
             recipe?.let {
                 Column {
-                    Text(text = "Title: ${it.title}")
-                    Text(text = "Ingredients: ${it.ingredients.joinToString()}")
-                    Text(text = "Optional Ingredients: ${it.optionalIngredients.joinToString()}")
-                    Text(text = "Herbs: ${it.herbs.joinToString()}")
-                    Text(text = "Steps: ${it.steps.joinToString()}")
+                    Text(
+                        text = it.title,
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        textAlign = TextAlign.Center
+                    )
                     it.image?.let { image ->
                         AsyncImage(
                             model = "${BuildConfig.CLOUDINARY_BASE_URL}${image}",
                             contentDescription = "Recipe Image ${it.title}",
-                            contentScale = ContentScale.Crop,
+                            contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp))
                         )
+                    }
+                    Text(text = "Ingredients", style = MaterialTheme.typography.labelLarge)
+                    it.ingredients.forEach { ingredient ->
+                        Text(text = ingredient, style = MaterialTheme.typography.bodyMedium)
+                    }
+                    Text(text = "Optional Ingredients", style = MaterialTheme.typography.labelLarge)
+                    it.optionalIngredients.forEach { optionalIngredient ->
+                        Text(text = optionalIngredient, style = MaterialTheme.typography.bodyMedium)
+                    }
+                    Text(text = "Herbs", style = MaterialTheme.typography.labelLarge)
+                    it.herbs.forEach { herb ->
+                        Text(text = herb, style = MaterialTheme.typography.bodyMedium)
+                    }
+                    Text(text = "Steps", style = MaterialTheme.typography.labelLarge)
+                    it.steps.forEachIndexed { index, step ->
+                        Text(text = "${index + 1}. $step", style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }

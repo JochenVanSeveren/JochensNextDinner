@@ -17,12 +17,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,7 +55,6 @@ enum class JochensNextDinnerScreen {
 @Composable
 fun JochensNextDinnerApp(navController: NavHostController = rememberNavController()) {
     val context = LocalContext.current
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val currentDestination by navController.currentBackStackEntryAsState()
     val currentRoute = currentDestination?.destination?.route
     val title = when (currentRoute) {
@@ -65,16 +62,10 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
         JochensNextDinnerScreen.CantEatScreen.name -> context.getString(R.string.cant_eat_screen)
         JochensNextDinnerScreen.LikeScreen.name -> context.getString(R.string.like_screen)
         JochensNextDinnerScreen.RecipeScreen.name -> context.getString(R.string.recipe_screen)
+        "RecipeDetailScreen/{recipeId}?title={title}" -> currentDestination?.arguments?.getString("title") ?: ""
         else -> ""
     }
-//    LazyColumn {
-//        val dummyList = List(100) { "Item $it" }
-//        items(dummyList) { item ->
-//            Text(text = item)
-//        }
-//    }
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopBar(
                 title,
@@ -148,14 +139,14 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
                     LikesScreen()
                 }
                 composable(route = JochensNextDinnerScreen.RecipeScreen.name) {
-                    RecipesScreen(onRecipeClick = { localId: Long ->
-                        navController.navigate("RecipeDetailScreen/${localId}")
+                    RecipesScreen(onRecipeClick = { localId, title ->
+                        navController.navigate("RecipeDetailScreen/${localId}?title=${title}")
                     })
                 }
-                composable("RecipeDetailScreen/{recipeId}") { backStackEntry ->
+
+                composable("RecipeDetailScreen/{recipeId}?title={title}") { backStackEntry ->  // Modify this line
                     val recipeId = backStackEntry.arguments?.getString("recipeId")?.toLongOrNull()
                     //TODO: do smth else when null
-                    Log.d("RECIPE NAV", "JochensNextDinnerApp: recipeId: $recipeId")
                     if (recipeId != null) {
                         RecipeDetailScreen(recipeId = recipeId)
                     }

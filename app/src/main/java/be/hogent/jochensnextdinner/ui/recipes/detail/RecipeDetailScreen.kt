@@ -1,11 +1,12 @@
 package be.hogent.jochensnextdinner.ui.recipes.detail
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -38,83 +39,75 @@ fun RecipeDetailScreen(
     val recipe by recipeDetailViewModel.recipe.collectAsState()
 
     when (val recipeApiState = recipeDetailViewModel.recipeApiState) {
-        is RecipeApiState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(Modifier.align(Alignment.Center))
-            }
+        is RecipeApiState.Loading -> Box(modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator(Modifier.align(Alignment.Center))
         }
 
-        is RecipeApiState.Error -> {
-            Text(text = recipeApiState.message)
-        }
+        is RecipeApiState.Error -> Text(text = recipeApiState.message)
 
-        is RecipeApiState.Success -> {
-            recipe?.let {
-                Column {
-                    it.image?.let { image ->
-                        AsyncImage(
-                            model = "${BuildConfig.CLOUDINARY_BASE_URL}${image}",
-                            contentDescription = "Recipe Image ${it.title}",
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                        )
-                    }
-                    Text(
-                        text = "Ingredients",
-                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        textAlign = TextAlign.Center
+        is RecipeApiState.Success -> recipe?.let { recipeData ->
+            LazyColumn {
+                item { RecipeImage(image = recipeData.image, title = recipeData.title) }
+                item { SectionHeader("Ingredients") }
+                items(recipeData.ingredients) { ingredient -> ListItem(ingredient) }
+
+                item { SectionHeader("Optional Ingredients") }
+                items(recipeData.optionalIngredients) { optionalIngredient ->
+                    ListItem(
+                        optionalIngredient
                     )
-                    it.ingredients.forEach { ingredient ->
-                        Text(text = ingredient, style = MaterialTheme.typography.bodyMedium)
-                    }
-                    if (it.optionalIngredients.isNotEmpty()) {
-                        Text(
-                            text = "Optional Ingredients",
-                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            textAlign = TextAlign.Center
-                        )
-                        it.optionalIngredients.forEach { optionalIngredient ->
-                            Text(
-                                text = optionalIngredient,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                    Text(
-                        text = "Herbs",
-                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        textAlign = TextAlign.Center
-                    )
-                    it.herbs.forEach { herb ->
-                        Text(text = herb, style = MaterialTheme.typography.bodyMedium)
-                    }
-                    Text(
-                        text = "Steps",
-                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        textAlign = TextAlign.Center
-                    )
-                    it.steps.forEachIndexed { index, step ->
-                        Text(
-                            text = "${index + 1}. $step",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
                 }
+
+                item { SectionHeader("Herbs") }
+                items(recipeData.herbs) { herb -> ListItem(herb) }
+
+                item { SectionHeader("Steps") }
+                itemsIndexed(recipeData.steps) { index, step -> NumberedListItem(step, index + 1) }
             }
         }
     }
+}
+
+@Composable
+fun RecipeImage(image: String?, title: String) {
+    image?.let {
+        AsyncImage(
+            model = "${BuildConfig.CLOUDINARY_BASE_URL}$it",
+            contentDescription = "Recipe Image $title",
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+        )
+    }
+}
+
+@Composable
+fun SectionHeader(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+fun ListItem(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+    )
+}
+
+@Composable
+fun NumberedListItem(text: String, number: Int) {
+    Text(
+        text = "$number. $text",
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+    )
 }

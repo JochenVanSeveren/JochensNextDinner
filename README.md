@@ -8,5 +8,6 @@ To run this project, you need to have these listed in your `local.properties` fi
 API_KEY=
 BASE_URL=
 AUTHOR_ID=
+CLOUDINARY_BASE_URL=
 ```
 

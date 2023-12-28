@@ -9,9 +9,9 @@ plugins {
 
 }
 
-val apiKeyPropertiesFile: File = rootProject.file("local.properties")
-val apiKeyProperties = Properties()
-apiKeyProperties.load(apiKeyPropertiesFile.inputStream())
+val keyPropertiesFile: File = rootProject.file("local.properties")
+val keyProperties = Properties()
+keyProperties.load(keyPropertiesFile.inputStream())
 
 android {
     namespace = "be.hogent.jochensnextdinner"
@@ -28,9 +28,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField("String", "API_KEY", apiKeyProperties["API_KEY"] as String)
-        buildConfigField("String", "BASE_URL", apiKeyProperties["BASE_URL"] as String)
-        buildConfigField("String", "AUTHOR_ID", apiKeyProperties["AUTHOR_ID"] as String)
+        buildConfigField("String", "API_KEY", keyProperties["API_KEY"] as String)
+        buildConfigField("String", "BASE_URL", keyProperties["BASE_URL"] as String)
+        buildConfigField("String", "AUTHOR_ID", keyProperties["AUTHOR_ID"] as String)
+        buildConfigField("String", "CLOUDINARY_BASE_URL", keyProperties["CLOUDINARY_BASE_URL"] as String)
     }
     buildFeatures {
         buildConfig = true
@@ -116,6 +117,10 @@ dependencies {
     ksp("androidx.room:room-compiler:$roomVersion")
 
     implementation("com.google.code.gson:gson:2.10")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
 }
 
 

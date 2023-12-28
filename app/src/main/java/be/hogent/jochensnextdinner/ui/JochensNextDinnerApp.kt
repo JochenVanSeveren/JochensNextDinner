@@ -34,7 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.ui.components.TopBar
 import be.hogent.jochensnextdinner.ui.likes.LikesScreen
-import be.hogent.jochensnextdinner.ui.screens.RecipesScreen
+import be.hogent.jochensnextdinner.ui.recipes.RecipesScreen
 import be.hogent.jochensnextdinner.ui.screens.StartScreen
 import be.hogent.jochensnextdinner.ui.theme.JochensNextDinnerTheme
 
@@ -61,7 +61,12 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
         JochensNextDinnerScreen.RecipeScreen.name -> context.getString(R.string.recipe_screen)
         else -> ""
     }
-
+//    LazyColumn {
+//        val dummyList = List(100) { "Item $it" }
+//        items(dummyList) { item ->
+//            Text(text = item)
+//        }
+//    }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {

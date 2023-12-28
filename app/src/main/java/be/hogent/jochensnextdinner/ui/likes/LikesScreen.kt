@@ -3,8 +3,10 @@ package be.hogent.jochensnextdinner.ui.likes
 import Like
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -42,6 +44,7 @@ fun LikesScreen(
     val likeApiState = likeViewModel.likeApiState
     val lazyListState = rememberLazyListState()
     val isAddingVisible = mutableStateOf(false)
+
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = isRefreshing.value),
         onRefresh = {
@@ -49,8 +52,9 @@ fun LikesScreen(
             likeViewModel.refresh()
             isRefreshing.value = false
         }
-    ) {
-        Scaffold(floatingActionButton = {
+    ) {    Box(modifier = Modifier.fillMaxSize()) {
+
+    Scaffold(floatingActionButton = {
             FloatingActionButton(
                 onClick = {
                     isAddingVisible.value = true
@@ -119,6 +123,6 @@ fun LikesScreen(
                 }
             }
 
-        }
+        } }
     }
 }

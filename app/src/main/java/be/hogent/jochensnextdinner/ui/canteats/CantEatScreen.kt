@@ -2,7 +2,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -34,7 +33,7 @@ fun CantEatScreen(
     val cantEatListState by cantEatViewModel.uiListState.collectAsState()
     val isRefreshing = remember { mutableStateOf(false) }
     val cantEatApiState = cantEatViewModel.cantEatApiState
-    val lazyListState = rememberLazyListState()
+//    val lazyListState = rememberLazyListState()
     val isAddingVisible = mutableStateOf(false)
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = isRefreshing.value),
@@ -63,8 +62,6 @@ fun CantEatScreen(
                 )
             }
         }) {
-
-
             when (cantEatApiState) {
                 is CantEatApiState.Loading -> Text("Loading...")
                 is CantEatApiState.Error -> {
@@ -79,7 +76,7 @@ fun CantEatScreen(
                 }
 
                 is CantEatApiState.Success -> {
-                    LazyColumn(state = lazyListState) {
+                    LazyColumn() {
                         item {
                             if (cantEatListState.cantEatList.isEmpty() || isAddingVisible.value) {
                                 CantEatListItem(

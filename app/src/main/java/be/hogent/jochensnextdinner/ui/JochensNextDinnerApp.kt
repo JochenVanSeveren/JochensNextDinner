@@ -33,7 +33,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.ui.components.TopBar
-import be.hogent.jochensnextdinner.ui.screens.LikesScreen
+import be.hogent.jochensnextdinner.ui.likes.LikesScreen
 import be.hogent.jochensnextdinner.ui.screens.RecipesScreen
 import be.hogent.jochensnextdinner.ui.screens.StartScreen
 import be.hogent.jochensnextdinner.ui.theme.JochensNextDinnerTheme

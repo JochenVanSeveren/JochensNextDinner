@@ -3,8 +3,6 @@ package be.hogent.jochensnextdinner.data
 import be.hogent.jochensnextdinner.data.database.CantEatDao
 import be.hogent.jochensnextdinner.data.database.asDomainCantEats
 import be.hogent.jochensnextdinner.model.CantEat
-import be.hogent.jochensnextdinner.model.asApiObject
-import be.hogent.jochensnextdinner.model.asDbCantEat
 import be.hogent.jochensnextdinner.network.CantEatApiService
 import be.hogent.jochensnextdinner.network.asDomainObject
 import be.hogent.jochensnextdinner.network.asDomainObjects

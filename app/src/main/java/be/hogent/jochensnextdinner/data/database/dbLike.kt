@@ -1,9 +1,9 @@
 package be.hogent.jochensnextdinner.data.database
 
+import Like
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import be.hogent.jochensnextdinner.model.Like
 
 @Entity(tableName = "likes", indices = [Index(value = ["serverId"], unique = true)])
 data class dbLike(

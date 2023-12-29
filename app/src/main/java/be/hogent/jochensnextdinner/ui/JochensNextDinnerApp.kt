@@ -33,6 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.ui.components.BottomBar
 import be.hogent.jochensnextdinner.ui.components.TopBar
+import be.hogent.jochensnextdinner.ui.navigation.BottomNavigationLayout
 import be.hogent.jochensnextdinner.ui.navigation.NavComponent
 import be.hogent.jochensnextdinner.ui.theme.JochensNextDinnerTheme
 import be.hogent.jochensnextdinner.utils.JndNavigationType
@@ -45,29 +46,19 @@ import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 fun JochensNextDinnerApp(
     navController: NavHostController = rememberNavController(), navigationType: JndNavigationType,
 ) {
-    val currentDestination by navController.currentBackStackEntryAsState()
-    val currentRoute = currentDestination?.destination?.route
-    val title = when (currentRoute) {
-        JochensNextDinnerScreen.CantEatScreen.name -> stringResource(id = R.string.cant_eat_screen)
-        JochensNextDinnerScreen.LikeScreen.name -> stringResource(id = R.string.like_screen)
-        JochensNextDinnerScreen.RecipeScreen.name -> stringResource(id = R.string.recipe_screen)
-        "RecipeDetailScreen/{recipeId}?title={title}" -> currentDestination?.arguments?.getString("title")
-            ?: stringResource(id = R.string.app_name)
-
-        else -> stringResource(id = R.string.app_name)
-    }
+  
 
     when (navigationType) {
         JndNavigationType.BOTTOM_NAVIGATION -> {
-            BottomNavigationLayout(title, navController, currentRoute)
+            BottomNavigationLayout(navController)
         }
 
         JndNavigationType.PERMANENT_NAVIGATION_DRAWER -> {
-            DrawerNavigationLayout(title, navController, currentRoute)
+            DrawerNavigationLayout(navController)
         }
 
         JndNavigationType.NAVIGATION_RAIL -> {
-            RailNavigationLayout(title, navController, currentRoute)
+//            RailNavigationLayout(navController)
         }
     }
 
@@ -75,49 +66,9 @@ fun JochensNextDinnerApp(
 }
 
 @Composable
-fun BottomNavigationLayout(
-    title: String,
-    navController: NavHostController,
-    currentRoute: String?,
-    screens: List<JochensNextDinnerScreen> = JochensNextDinnerScreen.values().toList()
-        .filter { it.inBottomBar }
-) {
+fun DrawerNavigationLayout(navController: NavHostController) {
     Scaffold(
-        topBar = {
-            TopBar(
-                title,
-                navController = navController
-            )
-        },
-        bottomBar = {
-            AnimatedVisibility(
-                visible = currentRoute == JochensNextDinnerScreen.Start.name,
-                enter = slideInVertically(
-                    initialOffsetY = { it },
-                    animationSpec = tween(durationMillis = 500)
-                ),
-                exit = slideOutVertically(
-                    targetOffsetY = { it },
-                    animationSpec = tween(durationMillis = 500)
-                )
-            ) {
-                BottomBar(navController, screens)
-            }
-        }
-    ) {
-        Surface(modifier = Modifier.padding(it), color = MaterialTheme.colorScheme.background) {
-            NavComponent(
-                navController = navController,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun DrawerNavigationLayout(title: String, navController: NavHostController, currentRoute: String?) {
-    Scaffold(
-        topBar = { TopBar(title, navController = navController) },
+        topBar = { TopBar(navController = navController) },
 //        drawerContent = { DrawerContent(navController) }
     ) { innerPadding ->
         Surface(
@@ -167,41 +118,41 @@ fun DrawerItem(text: String, icon: ImageVector, onClick: () -> Unit) {
     }
 }
 
-@Composable
-fun RailNavigationLayout(title: String, navController: NavHostController, currentRoute: String?) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        NavigationRailComponent(navController = navController, currentRoute = currentRoute)
-        Scaffold(
-            topBar = { TopBar(title, navController = navController) }
-        ) { innerPadding ->
-            Surface(
-                modifier = Modifier.padding(innerPadding),
-                color = MaterialTheme.colorScheme.background
-            ) {
-                NavComponent(navController = navController, modifier = Modifier.padding(16.dp))
-            }
-        }
-    }
-}
-
-@Composable
-fun NavigationRailComponent(navController: NavHostController, currentRoute: String?) {
-    NavigationRail {
-        NavigationRailItem(
-            icon = { Icon(Icons.Default.Home, contentDescription = "Start") },
-            label = { Text("Start") },
-            selected = (currentRoute == JochensNextDinnerScreen.Start.name),
-            onClick = { navController.navigate(JochensNextDinnerScreen.Start.name) }
-        )
-        NavigationRailItem(
-            icon = { Icon(Icons.Default.Home, contentDescription = "Can't Eat") },
-            label = { Text("Can't Eat") },
-            selected = (currentRoute == JochensNextDinnerScreen.CantEatScreen.name),
-            onClick = { navController.navigate(JochensNextDinnerScreen.CantEatScreen.name) }
-        )
-        // Add other NavigationRailItems here
-    }
-}
+//@Composable
+//fun RailNavigationLayout(navController: NavHostController) {
+//    Row(modifier = Modifier.fillMaxWidth()) {
+//        NavigationRailComponent(navController = navController)
+//        Scaffold(
+//            topBar = { TopBar(navController = navController) }
+//        ) { innerPadding ->
+//            Surface(
+//                modifier = Modifier.padding(innerPadding),
+//                color = MaterialTheme.colorScheme.background
+//            ) {
+//                NavComponent(navController = navController, modifier = Modifier.padding(16.dp))
+//            }
+//        }
+//    }
+//}
+//
+//@Composable
+//fun NavigationRailComponent(navController: NavHostController ) {
+//    NavigationRail {
+//        NavigationRailItem(
+//            icon = { Icon(Icons.Default.Home, contentDescription = "Start") },
+//            label = { Text("Start") },
+//            selected = (currentRoute == JochensNextDinnerScreen.Start.name),
+//            onClick = { navController.navigate(JochensNextDinnerScreen.Start.name) }
+//        )
+//        NavigationRailItem(
+//            icon = { Icon(Icons.Default.Home, contentDescription = "Can't Eat") },
+//            label = { Text("Can't Eat") },
+//            selected = (currentRoute == JochensNextDinnerScreen.CantEatScreen.name),
+//            onClick = { navController.navigate(JochensNextDinnerScreen.CantEatScreen.name) }
+//        )
+//        // Add other NavigationRailItems here
+//    }
+//}
 
 
 @Preview(showBackground = true)

@@ -10,18 +10,31 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import be.hogent.jochensnextdinner.R
+import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    title: String,
     navController: NavHostController,
 ) {
     val canGoBack = navController.previousBackStackEntry != null
+
+    val currentDestination by navController.currentBackStackEntryAsState()
+    val title = when (currentDestination?.destination?.route) {
+        JochensNextDinnerScreen.CantEatScreen.name -> stringResource(id = R.string.cant_eat_screen)
+        JochensNextDinnerScreen.LikeScreen.name -> stringResource(id = R.string.like_screen)
+        JochensNextDinnerScreen.RecipeScreen.name -> stringResource(id = R.string.recipe_screen)
+        "RecipeDetailScreen/{recipeId}?title={title}" -> currentDestination?.arguments?.getString("title")
+            ?: stringResource(id = R.string.app_name)
+
+        else -> stringResource(id = R.string.app_name)
+    }
 
     CenterAlignedTopAppBar(
         colors = TopAppBarColors(

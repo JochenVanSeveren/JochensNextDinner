@@ -1,7 +1,5 @@
 package be.hogent.jochensnextdinner.model
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import be.hogent.jochensnextdinner.BuildConfig
 import be.hogent.jochensnextdinner.data.database.dbCantEat
 import be.hogent.jochensnextdinner.network.ApiCantEat

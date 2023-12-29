@@ -1,7 +1,7 @@
 package be.hogent.jochensnextdinner.fake
 
-import be.hogent.jochensnextdinner.network.CantEatApiService
 import be.hogent.jochensnextdinner.network.ApiCantEat
+import be.hogent.jochensnextdinner.network.CantEatApiService
 
 class FakeCantEatApiService : CantEatApiService {
     override suspend fun getCantEats(): List<ApiCantEat> {

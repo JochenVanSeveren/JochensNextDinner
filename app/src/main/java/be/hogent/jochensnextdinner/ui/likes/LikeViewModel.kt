@@ -1,6 +1,5 @@
 package be.hogent.jochensnextdinner.ui.likes
 
-import Like
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue

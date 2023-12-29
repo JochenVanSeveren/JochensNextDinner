@@ -1,7 +1,6 @@
 package be.hogent.jochensnextdinner.ui
 
 import CantEatScreen
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,21 +23,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import be.hogent.jochensnextdinner.R
-import be.hogent.jochensnextdinner.model.Recipe
 import be.hogent.jochensnextdinner.ui.components.TopBar
 import be.hogent.jochensnextdinner.ui.likes.LikesScreen
-import be.hogent.jochensnextdinner.ui.recipes.RecipeViewModel
-import be.hogent.jochensnextdinner.ui.recipes.detail.RecipeDetailScreen
+import be.hogent.jochensnextdinner.ui.navigation.NavComponent
 import be.hogent.jochensnextdinner.ui.recipes.RecipesScreen
+import be.hogent.jochensnextdinner.ui.recipes.detail.RecipeDetailScreen
 import be.hogent.jochensnextdinner.ui.screens.StartScreen
 import be.hogent.jochensnextdinner.ui.theme.JochensNextDinnerTheme
+import be.hogent.jochensnextdinner.ui.util.JndNavigationType
 
 enum class JochensNextDinnerScreen {
     Start,
@@ -51,9 +48,10 @@ enum class JochensNextDinnerScreen {
 
 /*TODO: feed toevoegen */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JochensNextDinnerApp(navController: NavHostController = rememberNavController()) {
+fun JochensNextDinnerApp(
+    navController: NavHostController = rememberNavController(), navigationType: JndNavigationType,
+) {
     val context = LocalContext.current
     val currentDestination by navController.currentBackStackEntryAsState()
     val currentRoute = currentDestination?.destination?.route
@@ -62,7 +60,9 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
         JochensNextDinnerScreen.CantEatScreen.name -> context.getString(R.string.cant_eat_screen)
         JochensNextDinnerScreen.LikeScreen.name -> context.getString(R.string.like_screen)
         JochensNextDinnerScreen.RecipeScreen.name -> context.getString(R.string.recipe_screen)
-        "RecipeDetailScreen/{recipeId}?title={title}" -> currentDestination?.arguments?.getString("title") ?: ""
+        "RecipeDetailScreen/{recipeId}?title={title}" -> currentDestination?.arguments?.getString("title")
+            ?: ""
+
         else -> ""
     }
     Scaffold(
@@ -120,37 +120,10 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
         }
     ) {
         Surface(modifier = Modifier.padding(it), color = MaterialTheme.colorScheme.background) {
-            NavHost(
+            NavComponent(
                 navController = navController,
-                startDestination = JochensNextDinnerScreen.Start.name,
                 modifier = Modifier.padding(16.dp)
-            ) {
-                composable(route = JochensNextDinnerScreen.Start.name) {
-                    StartScreen(
-                        onCantEatClick = { navController.navigate(JochensNextDinnerScreen.CantEatScreen.name) },
-                        onLikeClick = { navController.navigate(JochensNextDinnerScreen.LikeScreen.name) },
-                        onRecipeClick = { navController.navigate(JochensNextDinnerScreen.RecipeScreen.name) }
-                    )
-                }
-                composable(route = JochensNextDinnerScreen.CantEatScreen.name) {
-                    CantEatScreen()
-                }
-                composable(route = JochensNextDinnerScreen.LikeScreen.name) {
-                    LikesScreen()
-                }
-                composable(route = JochensNextDinnerScreen.RecipeScreen.name) {
-                    RecipesScreen(onRecipeClick = { localId, title ->
-                        navController.navigate("RecipeDetailScreen/${localId}?title=${title}")
-                    })
-                }
-
-                composable("RecipeDetailScreen/{recipeId}?title={title}") { backStackEntry ->  // Modify this line
-                    val recipeId = backStackEntry.arguments?.getString("recipeId")?.toLongOrNull()
-                    if (recipeId != null) {
-                        RecipeDetailScreen(recipeId = recipeId)
-                    }
-                }
-            }
+            )
         }
     }
 }
@@ -159,6 +132,14 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
 @Composable
 fun JochensNextDinnerAppPreview() {
     JochensNextDinnerTheme {
-        JochensNextDinnerApp()
+        JochensNextDinnerApp(navigationType = JndNavigationType.BOTTOM_NAVIGATION)
+    }
+}
+
+@Preview(showBackground = true, widthDp = 1000)
+@Composable
+fun JochensNextDinnerAppPreviewDark() {
+    JochensNextDinnerTheme(darkTheme = true) {
+        JochensNextDinnerApp(navigationType = JndNavigationType.PERMANENT_NAVIGATION_DRAWER)
     }
 }

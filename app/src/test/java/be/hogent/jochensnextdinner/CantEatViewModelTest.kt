@@ -2,7 +2,7 @@ package be.hogent.jochensnextdinner
 
 import be.hogent.jochensnextdinner.fake.FakeCantEatRepository
 import be.hogent.jochensnextdinner.model.CantEat
-import be.hogent.jochensnextdinner.ui.canteats.CantEatViewModel
+import be.hogent.jochensnextdinner.ui.appSections.canteats.CantEatViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestDispatcher

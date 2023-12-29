@@ -1,9 +1,5 @@
 package be.hogent.jochensnextdinner.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,25 +11,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import be.hogent.jochensnextdinner.R
-import be.hogent.jochensnextdinner.ui.components.BottomBar
 import be.hogent.jochensnextdinner.ui.components.TopBar
-import be.hogent.jochensnextdinner.ui.navigation.BottomNavigationLayout
+import be.hogent.jochensnextdinner.ui.layout.BottomNavigationLayout
 import be.hogent.jochensnextdinner.ui.navigation.NavComponent
 import be.hogent.jochensnextdinner.ui.theme.JochensNextDinnerTheme
 import be.hogent.jochensnextdinner.utils.JndNavigationType

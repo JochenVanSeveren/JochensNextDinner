@@ -1,4 +1,4 @@
-package be.hogent.jochensnextdinner.ui.recipes.detail
+package be.hogent.jochensnextdinner.ui.appSections.recipes.detail
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import be.hogent.jochensnextdinner.BuildConfig
-import be.hogent.jochensnextdinner.ui.recipes.RecipeApiState
+import be.hogent.jochensnextdinner.ui.appSections.recipes.RecipeApiState
 import coil.compose.AsyncImage
 
 @Composable

@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.model.CantEat
-import be.hogent.jochensnextdinner.ui.canteats.CantEatApiState
-import be.hogent.jochensnextdinner.ui.canteats.CantEatViewModel
+import be.hogent.jochensnextdinner.ui.appSections.canteats.CantEatApiState
+import be.hogent.jochensnextdinner.ui.appSections.canteats.CantEatViewModel
 import be.hogent.jochensnextdinner.ui.components.CantEatListItem
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState

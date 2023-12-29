@@ -1,4 +1,4 @@
-package be.hogent.jochensnextdinner.ui.screens
+package be.hogent.jochensnextdinner.ui
 
 import android.content.Intent
 import android.net.Uri

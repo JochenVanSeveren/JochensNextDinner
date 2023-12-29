@@ -1,4 +1,4 @@
-package be.hogent.jochensnextdinner.ui.recipes
+package be.hogent.jochensnextdinner.ui.appSections.recipes
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package be.hogent.jochensnextdinner.ui.canteats
+package be.hogent.jochensnextdinner.ui.appSections.canteats
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

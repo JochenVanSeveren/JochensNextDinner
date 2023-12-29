@@ -1,4 +1,4 @@
-package be.hogent.jochensnextdinner.ui.navigation
+package be.hogent.jochensnextdinner.ui.layout
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import be.hogent.jochensnextdinner.ui.components.BottomBar
 import be.hogent.jochensnextdinner.ui.components.TopBar
+import be.hogent.jochensnextdinner.ui.navigation.NavComponent
 import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 
 @Composable

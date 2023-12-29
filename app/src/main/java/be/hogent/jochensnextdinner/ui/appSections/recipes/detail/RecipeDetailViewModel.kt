@@ -1,4 +1,4 @@
-package be.hogent.jochensnextdinner.ui.recipes.detail
+package be.hogent.jochensnextdinner.ui.appSections.recipes.detail
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,7 +10,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import be.hogent.jochensnextdinner.JndApplication
 import be.hogent.jochensnextdinner.data.RecipeRepository
 import be.hogent.jochensnextdinner.model.Recipe
-import be.hogent.jochensnextdinner.ui.recipes.RecipeApiState
+import be.hogent.jochensnextdinner.ui.appSections.recipes.RecipeApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first

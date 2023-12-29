@@ -10,7 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import be.hogent.jochensnextdinner.R
@@ -22,7 +22,6 @@ fun TopBar(
     navController: NavHostController,
 ) {
     val canGoBack = navController.previousBackStackEntry != null
-    val context = LocalContext.current
 
     CenterAlignedTopAppBar(
         colors = TopAppBarColors(
@@ -38,7 +37,7 @@ fun TopBar(
                 IconButton(onClick = { navController.navigateUp() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = context.getString(R.string.navigate_up),
+                        contentDescription = stringResource(id = R.string.navigate_up),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }

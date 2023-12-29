@@ -6,11 +6,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import be.hogent.jochensnextdinner.ui.JochensNextDinnerScreen
 import be.hogent.jochensnextdinner.ui.likes.LikesScreen
 import be.hogent.jochensnextdinner.ui.recipes.RecipesScreen
 import be.hogent.jochensnextdinner.ui.recipes.detail.RecipeDetailScreen
 import be.hogent.jochensnextdinner.ui.screens.StartScreen
+import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 
 @Composable
 fun NavComponent(

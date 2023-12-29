@@ -2,14 +2,12 @@ package be.hogent.jochensnextdinner.ui.likes
 
 import Like
 import android.annotation.SuppressLint
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -27,15 +25,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.ui.components.LikeListItem
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
-@OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LikesScreen(
@@ -44,7 +43,6 @@ fun LikesScreen(
     val likeListState by likeViewModel.uiListState.collectAsState()
     val isRefreshing = remember { mutableStateOf(false) }
     val likeApiState = likeViewModel.likeApiState
-    val lazyListState = rememberLazyListState()
     val isAddingVisible = mutableStateOf(false)
 
     SwipeRefresh(
@@ -67,7 +65,7 @@ fun LikesScreen(
                 ) {
                     Icon(
                         Icons.Filled.Add,
-                        "Add button",
+                        stringResource(R.string.add_button),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -83,13 +81,13 @@ fun LikesScreen(
                             Button(onClick = {
                                 likeViewModel.refresh()
                             }) {
-                                Text("Try Again")
+                                Text(stringResource(R.string.try_again))
                             }
                         }
                     }
 
                     is LikeApiState.Success -> {
-                        LazyColumn(state = lazyListState) {
+                        LazyColumn {
                             val groupedLikes = likeListState.likeList.groupBy { it.category }
                             item {
                                 if (likeListState.likeList.isEmpty() || isAddingVisible.value) {

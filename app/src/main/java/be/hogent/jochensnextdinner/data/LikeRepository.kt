@@ -56,10 +56,8 @@ class CachingLikeRepository(
     }
 
     override suspend fun deleteLike(like: Like) {
-        if (like.serverId != null) {
-            val apiLike = like.asApiObject()
-            likeApiService.deleteLikeAsFlow(apiLike.id!!).first()
-        }
+        val apiLike = like.asApiObject()
+        apiLike.id?.let { likeApiService.deleteLikeAsFlow(it).first() }
         likeDao.delete(like.asDbLike())
     }
 

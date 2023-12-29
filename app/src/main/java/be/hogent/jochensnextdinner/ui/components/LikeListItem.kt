@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,7 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import be.hogent.jochensnextdinner.R
 
 @Composable
 fun LikeListItem(
@@ -74,26 +77,44 @@ fun LikeListItem(
             if (isEditing.value) {
                 Row {
                     IconButton(onClick = {
-                        onSave(Like(name = name.value, category = category.value))
+                        onSave(like.copy(name = name.value, category = category.value))
+                        if (isNew) {
+                            name.value = ""
+                            category.value = ""
+                        }
                         isEditing.value = false
                     }) {
-                        Icon(Icons.Filled.Check, contentDescription = "Save")
+                        Icon(
+                            Icons.Filled.Check,
+                            contentDescription = stringResource(id = R.string.save)
+                        )
                     }
                     IconButton(onClick = {
-                        if (isNew) {
-                            onDelete(Like(name = name.value, category = category.value))
+                        if (!isNew) {
+                            onDelete(like)
                         } else {
                             isEditing.value = false
                         }
                     }) {
-                        Icon(Icons.Filled.Clear, contentDescription = "Cancel")
+                        if (isNew)
+                            Icon(
+                                Icons.Filled.Clear,
+                                contentDescription = stringResource(id = R.string.cancel)
+                            )
+                        else
+                            Icon(
+                                Icons.Filled.Delete,
+                                contentDescription = stringResource(id = R.string.delete)
+                            )
                     }
                 }
             } else {
                 IconButton(onClick = {
                     isEditing.value = true
                 }) {
-                    Icon(Icons.Filled.Edit, contentDescription = "Edit")
+                    Icon(
+                        Icons.Filled.Edit, contentDescription = stringResource(id = R.string.edit)
+                    )
                 }
             }
         })

@@ -146,7 +146,6 @@ fun JochensNextDinnerApp(navController: NavHostController = rememberNavControlle
 
                 composable("RecipeDetailScreen/{recipeId}?title={title}") { backStackEntry ->  // Modify this line
                     val recipeId = backStackEntry.arguments?.getString("recipeId")?.toLongOrNull()
-                    //TODO: do smth else when null
                     if (recipeId != null) {
                         RecipeDetailScreen(recipeId = recipeId)
                     }

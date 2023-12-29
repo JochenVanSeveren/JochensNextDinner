@@ -21,7 +21,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.model.CantEat
 import be.hogent.jochensnextdinner.ui.canteats.CantEatApiState
 import be.hogent.jochensnextdinner.ui.canteats.CantEatViewModel
@@ -38,8 +40,8 @@ fun CantEatScreen(
     val cantEatListState by cantEatViewModel.uiListState.collectAsState()
     val isRefreshing = remember { mutableStateOf(false) }
     val cantEatApiState = cantEatViewModel.cantEatApiState
-//    val lazyListState = rememberLazyListState()
     val isAddingVisible = mutableStateOf(false)
+
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = isRefreshing.value),
         onRefresh = {
@@ -51,10 +53,6 @@ fun CantEatScreen(
         Scaffold(floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-//                cantEatViewModel.viewModelScope.launch {
-//                    lazyListState.animateScrollToItem(0)
-//                }
-//                cantEatViewModel.toggleAddNew()
                     isAddingVisible.value = true
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -62,7 +60,7 @@ fun CantEatScreen(
             ) {
                 Icon(
                     Icons.Filled.Add,
-                    "Add button",
+                    stringResource(R.string.add_button),
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
@@ -78,7 +76,7 @@ fun CantEatScreen(
                         Button(onClick = {
                             cantEatViewModel.refresh()
                         }) {
-                            Text("Try Again")
+                            Text(stringResource(R.string.try_again))
                         }
                     }
                 }

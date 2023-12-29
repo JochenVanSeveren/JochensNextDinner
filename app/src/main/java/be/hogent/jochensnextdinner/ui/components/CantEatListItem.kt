@@ -101,7 +101,7 @@ fun CantEatListItem(
                 }) {
                     Icon(
                         Icons.Filled.Edit,
-                        contentDescription = stringResource(id = androidx.compose.material3.R.string.m3c_bottom_sheet_expand_description)
+                        contentDescription = stringResource(id = R.string.edit)
                     )
                 }
             }

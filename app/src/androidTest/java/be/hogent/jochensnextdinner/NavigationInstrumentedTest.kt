@@ -9,7 +9,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import be.hogent.jochensnextdinner.model.Recipe
 import be.hogent.jochensnextdinner.ui.JochensNextDinnerApp
+import be.hogent.jochensnextdinner.ui.recipes.RecipeViewModel
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -65,6 +67,35 @@ class NavigationTest {
         composeTestRule.onNodeWithContentDescription(getResourceString(R.string.navigate_up))
             .performClick()
         composeTestRule.onNodeWithText(getResourceString(R.string.app_name))
+            .assertIsDisplayed()
+    }
+
+
+    @Test
+    fun navigateToRecipeDetailScreen() {
+        composeTestRule.onNodeWithContentDescription(getResourceString(R.string.navigate_to_recipe_screen))
+            .performClick()
+
+        composeTestRule.waitForIdle()
+        // TODO: BUG no recipes found
+
+
+        composeTestRule.onNodeWithText("Pad thai à la Jochen 4p")
+            .performClick()
+
+        composeTestRule.onNodeWithText("Pad thai à la Jochen 4p")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun navigateBackFromRecipeDetailScreen() {
+        // TODO: BUG no recipes found
+        navigateToRecipeDetailScreen()
+
+        composeTestRule.onNodeWithContentDescription(getResourceString(R.string.navigate_up))
+            .performClick()
+
+        composeTestRule.onNodeWithText(getResourceString(R.string.recipe_screen))
             .assertIsDisplayed()
     }
 

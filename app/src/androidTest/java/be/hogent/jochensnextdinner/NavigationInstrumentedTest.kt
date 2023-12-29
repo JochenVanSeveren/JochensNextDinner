@@ -9,9 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import be.hogent.jochensnextdinner.model.Recipe
 import be.hogent.jochensnextdinner.ui.JochensNextDinnerApp
-import be.hogent.jochensnextdinner.ui.recipes.RecipeViewModel
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule

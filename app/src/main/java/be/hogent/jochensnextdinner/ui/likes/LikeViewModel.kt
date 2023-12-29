@@ -41,44 +41,6 @@ class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
         }
     }
 
-    fun saveLike(like: Like) {
-        try {
-            likeApiState = LikeApiState.Loading
-            val errorMessage = validateInput(like)
-            if (errorMessage != null) {
-                likeApiState = LikeApiState.Error(errorMessage)
-                return
-            }
-            viewModelScope.launch {
-                likeRepository.saveLike(like)
-                getLikesFromRepo()
-            }
-            likeApiState = LikeApiState.Success
-        } catch (e: IOException) {
-            likeApiState = LikeApiState.Error(e.message ?: "Unknown error")
-        }
-    }
-
-    fun deleteLike(like: Like) {
-        try {
-            likeApiState = LikeApiState.Loading
-            viewModelScope.launch {
-                likeRepository.deleteLike(like)
-            }
-            likeApiState = LikeApiState.Success
-        } catch (e: IOException) {
-            likeApiState = LikeApiState.Error(e.message ?: "Unknown error")
-        }
-    }
-
-    private fun validateInput(like: Like): String? {
-        return when {
-            like.name.isEmpty() -> "Name cannot be empty"
-            like.category.isEmpty() -> "Category cannot be empty"
-            else -> null
-        }
-    }
-
     private fun getLikesFromRepo() {
         try {
             likeApiState = LikeApiState.Loading

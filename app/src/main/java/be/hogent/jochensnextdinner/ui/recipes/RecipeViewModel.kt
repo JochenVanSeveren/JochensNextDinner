@@ -41,44 +41,6 @@ class RecipeViewModel(private val recipeRepository: RecipeRepository) : ViewMode
         }
     }
 
-    fun saveRecipe(recipe: Recipe) {
-        try {
-            recipeApiState = RecipeApiState.Loading
-            val errorMessage = validateInput(recipe)
-            if (errorMessage != null) {
-                recipeApiState = RecipeApiState.Error(errorMessage)
-                return
-            }
-            viewModelScope.launch {
-                recipeRepository.saveRecipe(recipe)
-                getRecipesFromRepo()
-            }
-            recipeApiState = RecipeApiState.Success
-        } catch (e: IOException) {
-            recipeApiState = RecipeApiState.Error(e.message ?: "Unknown error")
-        }
-    }
-
-    fun deleteRecipe(recipe: Recipe) {
-        try {
-            recipeApiState = RecipeApiState.Loading
-            viewModelScope.launch {
-                recipeRepository.deleteRecipe(recipe)
-            }
-            recipeApiState = RecipeApiState.Success
-        } catch (e: IOException) {
-            recipeApiState = RecipeApiState.Error(e.message ?: "Unknown error")
-        }
-    }
-
-    private fun validateInput(recipe: Recipe): String? {
-        return if (recipe.title.isEmpty()) {
-            "Name cannot be empty"
-        } else {
-            null
-        }
-    }
-
     private fun getRecipesFromRepo() {
         try {
             recipeApiState = RecipeApiState.Loading

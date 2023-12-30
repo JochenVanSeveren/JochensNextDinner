@@ -122,8 +122,15 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.5.0")
 
+    // TODO: BUG
     testImplementation("org.mockito:mockito-core:3.12.4")
     testImplementation("org.mockito:mockito-inline:3.12.4")
+
+    // Adaptive layout
+//    implementation("androidx.compose.material3:material3-adaptive")
+    implementation("androidx.compose.material3:material3-adaptive-android:1.0.0-alpha03")
+
+
 
 }
 

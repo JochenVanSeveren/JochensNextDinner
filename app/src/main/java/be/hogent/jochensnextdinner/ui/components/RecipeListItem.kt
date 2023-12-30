@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -38,9 +40,10 @@ fun RecipeListItem(
             AsyncImage(
                 model = "${BuildConfig.CLOUDINARY_BASE_URL}${recipe.image}",
                 contentDescription = "Recipe Image ${recipe.title}",
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .widthIn(max = 500.dp)
+                    .align(Alignment.CenterHorizontally)
                     .clip(RoundedCornerShape(8.dp))
                     .clickable { onRecipeClick(recipe) }
             )

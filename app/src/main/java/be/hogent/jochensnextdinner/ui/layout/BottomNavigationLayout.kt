@@ -17,6 +17,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import be.hogent.jochensnextdinner.ui.components.BottomBar
 import be.hogent.jochensnextdinner.ui.components.TopBar
 import be.hogent.jochensnextdinner.ui.navigation.NavComponent
+import be.hogent.jochensnextdinner.utils.JndNavigationType
 import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 
 @Composable
@@ -54,7 +55,8 @@ fun BottomNavigationLayout(
         Surface(modifier = Modifier.padding(it), color = MaterialTheme.colorScheme.background) {
             NavComponent(
                 navController = navController,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
+                navigationType = JndNavigationType.BOTTOM_NAVIGATION
             )
         }
     }

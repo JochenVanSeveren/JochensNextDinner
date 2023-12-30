@@ -43,10 +43,6 @@ class MainActivity : ComponentActivity() {
                         WindowWidthSizeClass.Compact -> {
                             JochensNextDinnerApp(navigationType = JndNavigationType.BOTTOM_NAVIGATION)
                         }
-                        // If the window size class is medium, use navigation rail
-                        WindowWidthSizeClass.Medium -> {
-                            JochensNextDinnerApp(navigationType = JndNavigationType.NAVIGATION_RAIL)
-                        }
                         // If the window size class is expanded, use permanent navigation drawer
                         WindowWidthSizeClass.Expanded -> {
                             JochensNextDinnerApp(navigationType = JndNavigationType.PERMANENT_NAVIGATION_DRAWER)

@@ -1,7 +1,6 @@
 package be.hogent.jochensnextdinner.ui.layout
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
@@ -27,6 +26,7 @@ import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.ui.components.TopBar
 import be.hogent.jochensnextdinner.ui.navigation.NavComponent
 import be.hogent.jochensnextdinner.utils.IconResource
+import be.hogent.jochensnextdinner.utils.JndNavigationType
 import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 
 @Composable
@@ -50,7 +50,7 @@ fun DrawerNavigationLayout(
                 modifier = Modifier.padding(innerPadding),
                 color = MaterialTheme.colorScheme.background
             ) {
-                NavComponent(navController = navController, modifier = Modifier.padding(16.dp))
+                NavComponent(navController = navController, modifier = Modifier.padding(16.dp), navigationType = JndNavigationType.PERMANENT_NAVIGATION_DRAWER)
             }
         }
     }

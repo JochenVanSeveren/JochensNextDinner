@@ -30,7 +30,8 @@ import coil.compose.AsyncImage
 @Composable
 fun RecipeDetailScreen(
     recipeDetailViewModel: RecipeDetailViewModel = viewModel(factory = RecipeDetailViewModel.Factory),
-    recipeId: Long
+    recipeId: Long,
+    showImage : Boolean = true
 ) {
     LaunchedEffect(recipeId) {
         recipeDetailViewModel.getRecipeDetail(recipeId)
@@ -47,7 +48,9 @@ fun RecipeDetailScreen(
 
         is RecipeApiState.Success -> recipe?.let { recipeData ->
             LazyColumn {
-                item { RecipeImage(image = recipeData.image, title = recipeData.title) }
+                if (showImage) {
+                    item { RecipeImage(image = recipeData.image, title = recipeData.title) }
+                }
                 item { SectionHeader("Ingredients") }
                 items(recipeData.ingredients) { ingredient -> ListItem(ingredient) }
 

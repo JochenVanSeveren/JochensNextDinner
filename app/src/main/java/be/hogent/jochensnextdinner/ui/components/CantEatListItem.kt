@@ -26,23 +26,37 @@ import androidx.compose.ui.text.font.FontWeight
 import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.model.CantEat
 
+/**
+ * Composable function for displaying a list item for a CantEat object.
+ * It provides options for editing, saving, and deleting the CantEat object.
+ *
+ * @param cantEat The CantEat object to display.
+ * @param onSave The function to be invoked when the save button is clicked. It takes the updated CantEat object as a parameter.
+ * @param onDelete The function to be invoked when the delete button is clicked. It takes the CantEat object to be deleted as a parameter.
+ */
 @Composable
 fun CantEatListItem(
     cantEat: CantEat,
     onSave: (CantEat) -> Unit,
     onDelete: (CantEat) -> Unit,
 ) {
+    // Determine if the CantEat object is new based on whether its name is empty
     val isNew = cantEat.name.isEmpty()
+    // Remember the editing state of the CantEat object
     val isEditing = remember { mutableStateOf(isNew) }
+    // Remember the name of the CantEat object for editing
     val name = remember { mutableStateOf(cantEat.name) }
+    // Create a FocusRequester for requesting focus on the TextField
     val focusRequester = remember { FocusRequester() }
 
+    // Request focus on the TextField when the editing state is true
     LaunchedEffect(isEditing.value) {
         if (isEditing.value) {
             focusRequester.requestFocus()
         }
     }
 
+    // Create a ListItem with a TextField for editing the name and buttons for saving and deleting
     ListItem(
         modifier = Modifier.testTag("ListItem-${cantEat.name}"),
         headlineContent = {

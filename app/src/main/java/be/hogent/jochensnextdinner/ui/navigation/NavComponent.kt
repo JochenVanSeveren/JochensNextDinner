@@ -13,12 +13,20 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import be.hogent.jochensnextdinner.ui.StartScreen
-import be.hogent.jochensnextdinner.ui.appSections.canteats.likes.LikesScreen
+import be.hogent.jochensnextdinner.ui.appSections.likes.LikesScreen
 import be.hogent.jochensnextdinner.ui.appSections.recipes.RecipesScreen
 import be.hogent.jochensnextdinner.ui.appSections.recipes.detail.RecipeDetailScreen
 import be.hogent.jochensnextdinner.utils.JndNavigationType
 import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 
+/**
+ * Composable function for creating a navigation component.
+ * It sets up the navigation routes and their corresponding screens.
+ *
+ * @param navController The NavController for navigating between screens.
+ * @param navigationType The type of navigation to use (e.g., bottom navigation, drawer navigation).
+ * @param modifier The modifier to apply to the NavHost.
+ */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun NavComponent(

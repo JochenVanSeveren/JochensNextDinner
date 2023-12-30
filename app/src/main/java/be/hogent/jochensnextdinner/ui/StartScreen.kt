@@ -15,6 +15,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +34,14 @@ import androidx.compose.ui.unit.dp
 import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.ui.theme.JochensNextDinnerTheme
 
+/**
+ * Composable function for the StartScreen.
+ * It displays clickable text and three IconTextRow items.
+ *
+ * @param onCantEatClick The function to be invoked when the CantEat IconTextRow is clicked.
+ * @param onLikeClick The function to be invoked when the Like IconTextRow is clicked.
+ * @param onRecipeClick The function to be invoked when the Recipe IconTextRow is clicked.
+ */
 @Composable
 fun StartScreen(
     onCantEatClick: () -> Unit,
@@ -58,6 +70,7 @@ fun StartScreen(
             )
         }
 
+        // ClickableText with an annotated string. When the annotated part is clicked, it opens the URL in a browser.
         ClickableText(
             text = annotatedText,
             onClick = { offset ->
@@ -74,6 +87,7 @@ fun StartScreen(
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
         )
 
+        // IconTextRow for the CantEat item. When clicked, it invokes the onCantEatClick function.
         IconTextRow(
             onClick = onCantEatClick,
             iconId = R.drawable.skull,
@@ -81,6 +95,7 @@ fun StartScreen(
             text = "Wat mag je niet eten?"
         )
 
+        // IconTextRow for the Like item. When clicked, it invokes the onLikeClick function.
         IconTextRow(
             onClick = onLikeClick,
             iconId = R.drawable.thumb_up,
@@ -88,6 +103,7 @@ fun StartScreen(
             text = "Wat mag je dan wel eten?"
         )
 
+        // IconTextRow for the Recipe item. When clicked, it invokes the onRecipeClick function.
         IconTextRow(
             onClick = onRecipeClick,
             iconId = R.drawable.skillet,
@@ -97,6 +113,15 @@ fun StartScreen(
     }
 }
 
+/**
+ * Composable function for displaying a row with an icon and text.
+ * The row is clickable and invokes the provided onClick function when clicked.
+ *
+ * @param onClick The function to be invoked when the row is clicked.
+ * @param iconId The resource ID of the icon to display.
+ * @param contentDescription The content description for the icon.
+ * @param text The text to display.
+ */
 @Composable
 fun IconTextRow(
     onClick: () -> Unit,

@@ -2,7 +2,7 @@ package be.hogent.jochensnextdinner
 
 import Like
 import be.hogent.jochensnextdinner.data.LikeRepository
-import be.hogent.jochensnextdinner.ui.appSections.canteats.likes.LikeViewModel
+import be.hogent.jochensnextdinner.ui.appSections.likes.LikeViewModel
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify

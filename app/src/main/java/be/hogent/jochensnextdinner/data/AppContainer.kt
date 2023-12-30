@@ -21,19 +21,30 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import java.lang.reflect.Type
 
+/**
+ * Interface for the application container.
+ * It contains the repositories for the application.
+ */
 interface AppContainer {
     val cantEatRepository: CantEatRepository
     val likeRepository: LikeRepository
     val recipeRepository: RecipeRepository
 }
 
+/**
+ * Default implementation of the AppContainer interface.
+ * It sets up the network and database connections for the repositories.
+ */
 class DefaultAppContainer(private val context: Context) : AppContainer {
 
+    // Base URL and API key for the network requests
     private val baseUrl = BuildConfig.BASE_URL
     private val apiKey = BuildConfig.API_KEY
 
+    // Interceptor to check network connection
     private val networkCheck = NetworkConnectionInterceptor(context)
 
+    // OkHttpClient for making network requests
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(networkCheck)
         .addInterceptor(ApiKeyInterceptor(apiKey))
@@ -49,16 +60,19 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         }
         .build()
 
+    // JSON converter for parsing network responses
     private val json = Json { ignoreUnknownKeys = true }
 
+    // Retrofit instance for making network requests
     private val retrofit: Retrofit = Retrofit.Builder()
         .client(okHttpClient)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-//        API sometimes returns 500 error, so I needed a retry method
+        // API sometimes returns 500 error, so I needed a retry method
         .addCallAdapterFactory(RetryCallAdapterFactory())
         .baseUrl(baseUrl)
         .build()
 
+    // Retrofit services for the different APIs
     private val cantEatRetrofitService: CantEatApiService by lazy {
         retrofit.create(CantEatApiService::class.java)
     }
@@ -71,11 +85,11 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         retrofit.create(RecipeApiService::class.java)
     }
 
+    // Repositories for the different data types
     override val cantEatRepository: CantEatRepository by lazy {
         CachingCantEatRepository(
             JndDb.getDatabase(context = context).cantEatDao(),
             cantEatRetrofitService,
-//            context
         )
     }
 
@@ -83,7 +97,6 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         CachingLikeRepository(
             JndDb.getDatabase(context = context).likeDao(),
             likeRetrofitService,
-//            context
         )
     }
 
@@ -91,11 +104,13 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         CachingRecipeRepository(
             JndDb.getDatabase(context = context).recipeDao(),
             recipeRetrofitService,
-//            context
         )
     }
 }
 
+/**
+ * Interceptor for adding the API key to the network requests.
+ */
 class ApiKeyInterceptor(private val apiKey: String) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
         val originalRequest = chain.request()
@@ -153,6 +168,7 @@ class RetryCall<R>(
     private val delegate: Call<R>
 ) : Call<R> by delegate {
 
+    // Maximum number of retries for a network request
     private val maxRetries = 3
 
     override fun enqueue(callback: Callback<R>) {
@@ -180,7 +196,6 @@ class RetryCall<R>(
             }
         })
     }
-
 
     override fun clone(): Call<R> {
         return RetryCall(delegate.clone())

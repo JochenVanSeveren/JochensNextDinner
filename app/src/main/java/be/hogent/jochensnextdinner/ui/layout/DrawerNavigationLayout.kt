@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import be.hogent.jochensnextdinner.R
@@ -29,6 +30,12 @@ import be.hogent.jochensnextdinner.utils.IconResource
 import be.hogent.jochensnextdinner.utils.JndNavigationType
 import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 
+/**
+ * Composable function for creating a layout with a navigation drawer.
+ *
+ * @param navController The NavController for navigating between screens.
+ * @param screens The list of screens to display in the navigation drawer. By default, it includes all screens.
+ */
 @Composable
 fun DrawerNavigationLayout(
     navController: NavHostController,
@@ -56,6 +63,12 @@ fun DrawerNavigationLayout(
     }
 }
 
+/**
+ * Composable function for creating the content of the navigation drawer.
+ *
+ * @param navController The NavController for navigating between screens.
+ * @param screens The list of screens to display in the navigation drawer.
+ */
 @Composable
 fun DrawerContent(
     navController: NavHostController,

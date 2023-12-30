@@ -11,18 +11,27 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.font.FontWeight
 
+/**
+ * Composable function for displaying a list item for a Like object.
+ *
+ * @param like The Like object to display.
+ */
 @Composable
 fun LikeListItem(
     like: Like,
 ) {
+    // Remember the name of the Like object for displaying
     val name = remember { mutableStateOf(like.name) }
 
+    // Create a ListItem with the name of the Like object
     ListItem(
         headlineContent = {
             Column {
+                // Display the name of the Like object in bold text
                 Text(text = name.value, fontWeight = FontWeight.Bold)
             }
         },
+        // Set the colors for the ListItem
         colors = ListItemDefaults.colors(
             containerColor = MaterialTheme.colorScheme.background,
         )

@@ -27,43 +27,52 @@ import be.hogent.jochensnextdinner.BuildConfig
 import be.hogent.jochensnextdinner.ui.appSections.recipes.RecipeApiState
 import coil.compose.AsyncImage
 
+/**
+ * Composable function for the RecipeDetailScreen.
+ * It displays the details of a recipe.
+ *
+ * @param recipeDetailViewModel The ViewModel for managing Recipe data.
+ * @param recipeId The ID of the recipe to display.
+ * @param showImage A flag indicating whether to show the image of the recipe.
+ */
 @Composable
 fun RecipeDetailScreen(
     recipeDetailViewModel: RecipeDetailViewModel = viewModel(factory = RecipeDetailViewModel.Factory),
     recipeId: Long,
     showImage : Boolean = true
 ) {
+    // Fetch the recipe details when the recipeId changes
     LaunchedEffect(recipeId) {
         recipeDetailViewModel.getRecipeDetail(recipeId)
     }
 
+    // Observe the recipe data from the ViewModel
     val recipe by recipeDetailViewModel.recipe.collectAsState()
 
+    // Display different UI based on the API state
     when (val recipeApiState = recipeDetailViewModel.recipeApiState) {
+        // Display a CircularProgressIndicator when loading
         is RecipeApiState.Loading -> Box(modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator(Modifier.align(Alignment.Center))
         }
 
+        // Display an error message when an error occurs
         is RecipeApiState.Error -> Text(text = recipeApiState.message)
 
+        // Display the recipe details when the data is successfully fetched
         is RecipeApiState.Success -> recipe?.let { recipeData ->
             LazyColumn {
+                // Display the recipe image if showImage is true
                 if (showImage) {
                     item { RecipeImage(image = recipeData.image, title = recipeData.title) }
                 }
+                // Display the ingredients, optional ingredients, herbs, and steps of the recipe
                 item { SectionHeader("Ingredients") }
                 items(recipeData.ingredients) { ingredient -> ListItem(ingredient) }
-
                 item { SectionHeader("Optional Ingredients") }
-                items(recipeData.optionalIngredients) { optionalIngredient ->
-                    ListItem(
-                        optionalIngredient
-                    )
-                }
-
+                items(recipeData.optionalIngredients) { optionalIngredient -> ListItem(optionalIngredient) }
                 item { SectionHeader("Herbs") }
                 items(recipeData.herbs) { herb -> ListItem(herb) }
-
                 item { SectionHeader("Steps") }
                 itemsIndexed(recipeData.steps) { index, step -> NumberedListItem(step, index + 1) }
             }
@@ -71,6 +80,12 @@ fun RecipeDetailScreen(
     }
 }
 
+/**
+ * Composable function for displaying the recipe image.
+ *
+ * @param image The URL of the image.
+ * @param title The title of the recipe.
+ */
 @Composable
 fun RecipeImage(image: String?, title: String) {
     image?.let {
@@ -85,6 +100,11 @@ fun RecipeImage(image: String?, title: String) {
     }
 }
 
+/**
+ * Composable function for displaying a section header.
+ *
+ * @param title The title of the section.
+ */
 @Composable
 fun SectionHeader(title: String) {
     Text(
@@ -97,6 +117,11 @@ fun SectionHeader(title: String) {
     )
 }
 
+/**
+ * Composable function for displaying a list item.
+ *
+ * @param text The text of the list item.
+ */
 @Composable
 fun ListItem(text: String) {
     Text(
@@ -106,6 +131,12 @@ fun ListItem(text: String) {
     )
 }
 
+/**
+ * Composable function for displaying a numbered list item.
+ *
+ * @param text The text of the list item.
+ * @param number The number of the list item.
+ */
 @Composable
 fun NumberedListItem(text: String, number: Int) {
     Text(

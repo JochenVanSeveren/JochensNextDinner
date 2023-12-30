@@ -1,4 +1,4 @@
-package be.hogent.jochensnextdinner.ui.appSections.canteats.likes
+package be.hogent.jochensnextdinner.ui.appSections.likes
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,14 +27,23 @@ import be.hogent.jochensnextdinner.ui.components.LikeListItem
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
+/**
+ * Composable function for the LikesScreen.
+ *
+ * @param likeViewModel The ViewModel for managing Like data.
+ */
 @Composable
 fun LikesScreen(
     likeViewModel: LikeViewModel = viewModel(factory = LikeViewModel.Factory),
 ) {
+    // State for the list of Like items
     val likeListState by likeViewModel.uiListState.collectAsState()
+    // State for the refreshing status
     val isRefreshing = remember { mutableStateOf(false) }
+    // State for the API status
     val likeApiState = likeViewModel.likeApiState
 
+    // SwipeRefresh layout for refreshing the list of Like items
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = isRefreshing.value),
         onRefresh = {
@@ -43,13 +52,17 @@ fun LikesScreen(
             isRefreshing.value = false
         }
     ) {
+        // Box layout for the screen
         Box(modifier = Modifier.fillMaxSize()) {
 
+            // Display different UI based on the API status
             when (likeApiState) {
+                // Display a CircularProgressIndicator when loading
                 is LikeApiState.Loading -> Box(modifier = Modifier.fillMaxSize()) {
                     CircularProgressIndicator(Modifier.align(Alignment.Center))
                 }
 
+                // Display an error message and a retry button when an error occurs
                 is LikeApiState.Error -> {
                     Column {
                         Text(likeApiState.message)
@@ -61,10 +74,13 @@ fun LikesScreen(
                     }
                 }
 
+                // Display a list of Like items when the data is successfully fetched
                 is LikeApiState.Success -> {
                     LazyColumn {
+                        // Group the Like items by category
                         val groupedLikes = likeListState.likeList.groupBy { it.category }
                         groupedLikes.forEach { (category, likes) ->
+                            // Display the category as a header
                             item {
                                 Text(
                                     text = category,
@@ -73,20 +89,20 @@ fun LikesScreen(
                                     fontWeight = FontWeight.Bold
                                 )
                             }
+                            // Display the Like items for the category
                             items(likes.size) { index ->
                                 LikeListItem(
                                     like = likes[index]
                                 )
                             }
                         }
+                        // Add a spacer at the end of the list
                         item {
                             Spacer(modifier = Modifier.height(80.dp))
                         }
                     }
                 }
             }
-
-
         }
     }
 }

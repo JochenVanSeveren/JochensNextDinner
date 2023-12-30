@@ -31,17 +31,26 @@ import be.hogent.jochensnextdinner.ui.components.CantEatListItem
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
-
+/**
+ * Composable function for the CantEatScreen.
+ *
+ * @param cantEatViewModel The ViewModel for managing CantEat data.
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CantEatScreen(
     cantEatViewModel: CantEatViewModel = viewModel(factory = CantEatViewModel.Factory),
 ) {
+    // State for the list of CantEat items
     val cantEatListState by cantEatViewModel.uiListState.collectAsState()
+    // State for the refreshing status
     val isRefreshing = remember { mutableStateOf(false) }
+    // State for the API status
     val cantEatApiState = cantEatViewModel.cantEatApiState
+    // State for the visibility of the adding form
     val isAddingVisible = mutableStateOf(false)
 
+    // SwipeRefresh layout for refreshing the list of CantEat items
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing = isRefreshing.value),
         onRefresh = {
@@ -50,7 +59,9 @@ fun CantEatScreen(
             isRefreshing.value = false
         }
     ) {
+        // Scaffold layout for the screen
         Scaffold(floatingActionButton = {
+            // FloatingActionButton for adding a new CantEat item
             FloatingActionButton(
                 onClick = {
                     isAddingVisible.value = true
@@ -65,11 +76,14 @@ fun CantEatScreen(
                 )
             }
         }) {
+            // Display different UI based on the API status
             when (cantEatApiState) {
+                // Display a CircularProgressIndicator when loading
                 is CantEatApiState.Loading -> Box(modifier = Modifier.fillMaxSize()) {
                     CircularProgressIndicator(Modifier.align(Alignment.Center))
                 }
 
+                // Display an error message and a retry button when an error occurs
                 is CantEatApiState.Error -> {
                     Column {
                         Text(cantEatApiState.message)
@@ -81,6 +95,7 @@ fun CantEatScreen(
                     }
                 }
 
+                // Display a list of CantEat items when the data is successfully fetched
                 is CantEatApiState.Success -> {
                     LazyColumn() {
                         item {

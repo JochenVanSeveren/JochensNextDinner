@@ -17,7 +17,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import java.net.SocketTimeoutException
 
-
+/**
+ * Interface for the CantEatRepository.
+ * It contains the methods for managing CantEat data.
+ */
 interface CantEatRepository {
     fun getCantEats(): Flow<List<CantEat>>
     suspend fun insertCantEat(cantEat: CantEat)
@@ -25,14 +28,21 @@ interface CantEatRepository {
     suspend fun deleteCantEat(cantEat: CantEat)
     suspend fun updateCantEat(cantEat: CantEat)
     suspend fun refresh()
-//    var wifiWorkInfo: Flow<WorkInfo>
 }
 
+/**
+ * Implementation of the CantEatRepository interface.
+ * It uses a local database and a remote API for managing CantEat data.
+ */
 class CachingCantEatRepository(
     private val cantEatDao: CantEatDao,
     private val cantEatApiService: CantEatApiService,
 ) : CantEatRepository {
 
+    /**
+     * Fetches all CantEat items from the local database.
+     * If the local database is empty, it refreshes the data from the remote API.
+     */
     override fun getCantEats(): Flow<List<CantEat>> {
         return cantEatDao.getAllItems().map {
             it.asDomainCantEats()
@@ -43,10 +53,18 @@ class CachingCantEatRepository(
         }
     }
 
+    /**
+     * Inserts a CantEat item into the local database.
+     */
     override suspend fun insertCantEat(cantEat: CantEat) {
         cantEatDao.insert(cantEat.asDbCantEat())
     }
 
+    /**
+     * Saves a CantEat item to the remote API and the local database.
+     * If the item already exists in the remote API, it updates the item.
+     * Otherwise, it creates a new item.
+     */
     override suspend fun saveCantEat(cantEat: CantEat): CantEat {
         val apiCantEat = cantEat.asApiObject()
         val response = if (cantEat.serverId != null)
@@ -58,6 +76,9 @@ class CachingCantEatRepository(
         return createdCantEat
     }
 
+    /**
+     * Deletes a CantEat item from the remote API and the local database.
+     */
     override suspend fun deleteCantEat(cantEat: CantEat) {
         if (cantEat.serverId != null) {
             val apiCantEat = cantEat.asApiObject()
@@ -66,16 +87,14 @@ class CachingCantEatRepository(
         cantEatDao.delete(cantEat.asDbCantEat())
     }
 
+    /**
+     * Updates a CantEat item in the remote API and the local database.
+     */
     override suspend fun updateCantEat(cantEat: CantEat) {
         val apiCantEat = cantEat.asApiObject()
         val response = cantEatApiService.putCantEatAsFlow(apiCantEat).first()
         cantEatDao.update(response.asDomainObject().asDbCantEat())
     }
-
-//    private var workID = UUID(1, 2)
-//    private val workManager = WorkManager.getInstance(context)
-//    override var wifiWorkInfo: Flow<WorkInfo> =
-//        workManager.getWorkInfoByIdFlow(workID)
 
     /**
      * Refreshes the local database with data fetched from the remote API.

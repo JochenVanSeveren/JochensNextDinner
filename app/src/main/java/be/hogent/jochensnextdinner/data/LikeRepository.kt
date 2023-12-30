@@ -17,6 +17,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import java.net.SocketTimeoutException
 
+/**
+ * Interface for the LikeRepository.
+ * It contains the methods for managing Like data.
+ */
 interface LikeRepository {
     fun getLikes(): Flow<List<Like>>
     suspend fun insertLike(like: Like)
@@ -26,11 +30,19 @@ interface LikeRepository {
     suspend fun refresh()
 }
 
+/**
+ * Implementation of the LikeRepository interface.
+ * It uses a local database and a remote API for managing Like data.
+ */
 class CachingLikeRepository(
     private val likeDao: LikeDao,
     private val likeApiService: LikeApiService
 ) : LikeRepository {
 
+    /**
+     * Fetches all Like items from the local database.
+     * If the local database is empty, it refreshes the data from the remote API.
+     */
     override fun getLikes(): Flow<List<Like>> {
         return likeDao.getAllItems().map {
             it.asDomainLikes()
@@ -41,10 +53,18 @@ class CachingLikeRepository(
         }
     }
 
+    /**
+     * Inserts a Like item into the local database.
+     */
     override suspend fun insertLike(like: Like) {
         likeDao.insert(like.asDbLike())
     }
 
+    /**
+     * Saves a Like item to the remote API and the local database.
+     * If the item already exists in the remote API, it updates the item.
+     * Otherwise, it creates a new item.
+     */
     override suspend fun saveLike(like: Like): Like {
         val apiLike = like.asApiObject()
         val response = if (like.serverId != null)
@@ -56,12 +76,18 @@ class CachingLikeRepository(
         return createdLike
     }
 
+    /**
+     * Deletes a Like item from the remote API and the local database.
+     */
     override suspend fun deleteLike(like: Like) {
         val apiLike = like.asApiObject()
         apiLike.id?.let { likeApiService.deleteLikeAsFlow(it).first() }
         likeDao.delete(like.asDbLike())
     }
 
+    /**
+     * Updates a Like item in the remote API and the local database.
+     */
     override suspend fun updateLike(like: Like) {
         val apiLike = like.asApiObject()
         val response = likeApiService.putLikeAsFlow(apiLike).first()

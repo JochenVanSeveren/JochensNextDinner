@@ -1,4 +1,4 @@
-package be.hogent.jochensnextdinner.ui.appSections.canteats.likes
+package be.hogent.jochensnextdinner.ui.appSections.likes
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,10 +16,17 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for managing Like data.
+ *
+ * @property likeRepository The repository for managing Like data.
+ */
 class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
 
+    // State for the list of Like items
     lateinit var uiListState: StateFlow<LikeListState>
 
+    // State for the API status
     var likeApiState: LikeApiState by mutableStateOf(LikeApiState.Loading)
         private set
 
@@ -27,6 +34,9 @@ class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
         getLikesFromRepo()
     }
 
+    /**
+     * Refreshes the list of Like items from the repository.
+     */
     fun refresh() {
         viewModelScope.launch {
             try {
@@ -39,6 +49,9 @@ class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
         }
     }
 
+    /**
+     * Fetches the list of Like items from the repository.
+     */
     private fun getLikesFromRepo() {
         try {
             likeApiState = LikeApiState.Loading

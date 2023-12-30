@@ -18,6 +18,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import java.net.SocketTimeoutException
 
+/**
+ * Interface for the RecipeRepository.
+ * It contains the methods for managing Recipe data.
+ */
 interface RecipeRepository {
     fun getRecipes(): Flow<List<Recipe>>
     fun getRecipe(id: Long): Flow<Recipe?>
@@ -28,11 +32,19 @@ interface RecipeRepository {
     suspend fun refresh()
 }
 
+/**
+ * Implementation of the RecipeRepository interface.
+ * It uses a local database and a remote API for managing Recipe data.
+ */
 class CachingRecipeRepository(
     private val recipeDao: RecipeDao,
     private val recipeApiService: RecipeApiService
 ) : RecipeRepository {
 
+    /**
+     * Fetches all Recipe items from the local database.
+     * If the local database is empty, it refreshes the data from the remote API.
+     */
     override fun getRecipes(): Flow<List<Recipe>> {
         return recipeDao.getAllItems().map {
             it.asDomainRecipes()
@@ -43,16 +55,27 @@ class CachingRecipeRepository(
         }
     }
 
+    /**
+     * Fetches a Recipe item by its id from the local database.
+     */
     override fun getRecipe(id: Long): Flow<Recipe?> {
         return recipeDao.getItem(id).map {
             it.asDomainObject()
         }
     }
 
+    /**
+     * Inserts a Recipe item into the local database.
+     */
     override suspend fun insertRecipe(recipe: Recipe) {
         recipeDao.insert(recipe.asDbRecipe())
     }
 
+    /**
+     * Saves a Recipe item to the remote API and the local database.
+     * If the item already exists in the remote API, it updates the item.
+     * Otherwise, it creates a new item.
+     */
     override suspend fun saveRecipe(recipe: Recipe): Recipe {
         val apiRecipe = recipe.asApiObject()
         val response = if (recipe.serverId != null)
@@ -64,6 +87,9 @@ class CachingRecipeRepository(
         return createdRecipe
     }
 
+    /**
+     * Deletes a Recipe item from the remote API and the local database.
+     */
     override suspend fun deleteRecipe(recipe: Recipe) {
         if (recipe.serverId != null) {
             val apiRecipe = recipe.asApiObject()
@@ -72,6 +98,9 @@ class CachingRecipeRepository(
         recipeDao.delete(recipe.asDbRecipe())
     }
 
+    /**
+     * Updates a Recipe item in the remote API and the local database.
+     */
     override suspend fun updateRecipe(recipe: Recipe) {
         val apiRecipe = recipe.asApiObject()
         val response = recipeApiService.putRecipeAsFlow(apiRecipe).first()

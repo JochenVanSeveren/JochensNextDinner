@@ -16,10 +16,17 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for managing Recipe data.
+ *
+ * @property recipeRepository The repository for managing Recipe data.
+ */
 class RecipeViewModel(private val recipeRepository: RecipeRepository) : ViewModel() {
 
+    // State for the list of Recipe items
     lateinit var uiListState: StateFlow<RecipeListState>
 
+    // State for the API status
     var recipeApiState: RecipeApiState by mutableStateOf(RecipeApiState.Loading)
         private set
 
@@ -27,6 +34,9 @@ class RecipeViewModel(private val recipeRepository: RecipeRepository) : ViewMode
         getRecipesFromRepo()
     }
 
+    /**
+     * Refreshes the list of Recipe items from the repository.
+     */
     fun refresh() {
         viewModelScope.launch {
             try {
@@ -39,6 +49,9 @@ class RecipeViewModel(private val recipeRepository: RecipeRepository) : ViewMode
         }
     }
 
+    /**
+     * Fetches the list of Recipe items from the repository.
+     */
     private fun getRecipesFromRepo() {
         try {
             recipeApiState = RecipeApiState.Loading
@@ -55,15 +68,21 @@ class RecipeViewModel(private val recipeRepository: RecipeRepository) : ViewMode
     }
 
     companion object {
+        // Singleton instance of the ViewModel
         private var Instance: RecipeViewModel? = null
+        // Factory for creating the ViewModel
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 if (Instance == null) {
+                    // Get the application instance
                     val application =
                         (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as JndApplication)
+                    // Get the recipe repository from the application container
                     val recipeRepository = application.appContainer.recipeRepository
+                    // Create a new instance of the ViewModel
                     Instance = RecipeViewModel(recipeRepository = recipeRepository)
                 }
+                // Return the instance of the ViewModel
                 Instance!!
             }
         }

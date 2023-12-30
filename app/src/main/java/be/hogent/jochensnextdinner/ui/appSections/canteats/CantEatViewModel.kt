@@ -18,11 +18,18 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for managing CantEat data.
+ *
+ * @property cantEatRepository The repository for managing CantEat data.
+ */
 class CantEatViewModel(
     private val cantEatRepository: CantEatRepository
 ) : ViewModel() {
+    // State for the list of CantEat items
     lateinit var uiListState: StateFlow<CantEatListState>
 
+    // State for the API status
     var cantEatApiState: CantEatApiState by mutableStateOf(CantEatApiState.Loading)
         private set
 
@@ -30,6 +37,9 @@ class CantEatViewModel(
         getCantEatsFromRepo()
     }
 
+    /**
+     * Refreshes the list of CantEat items from the repository.
+     */
     fun refresh() {
         viewModelScope.launch {
             try {
@@ -42,7 +52,11 @@ class CantEatViewModel(
         }
     }
 
-
+    /**
+     * Saves a CantEat item to the repository.
+     *
+     * @param cantEat The CantEat item to save.
+     */
     fun saveCantEat(cantEat: CantEat) {
         try {
             cantEatApiState = CantEatApiState.Loading
@@ -61,6 +75,11 @@ class CantEatViewModel(
         }
     }
 
+    /**
+     * Deletes a CantEat item from the repository.
+     *
+     * @param cantEat The CantEat item to delete.
+     */
     fun deleteCantEat(cantEat: CantEat) {
         try {
             cantEatApiState = CantEatApiState.Loading
@@ -73,6 +92,12 @@ class CantEatViewModel(
         }
     }
 
+    /**
+     * Validates the input for a CantEat item.
+     *
+     * @param cantEat The CantEat item to validate.
+     * @return An error message if the input is invalid, null otherwise.
+     */
     private fun validateInput(cantEat: CantEat): String? {
         return if (cantEat.name.isEmpty()) {
             "Name cannot be empty"
@@ -81,6 +106,9 @@ class CantEatViewModel(
         }
     }
 
+    /**
+     * Fetches the list of CantEat items from the repository.
+     */
     private fun getCantEatsFromRepo() {
         try {
             cantEatApiState = CantEatApiState.Loading

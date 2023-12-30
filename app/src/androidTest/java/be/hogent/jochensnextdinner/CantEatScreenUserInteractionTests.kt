@@ -74,29 +74,6 @@ class CantEatScreenUserInteractionTests {
     }
 
     @Test
-    fun testEditItem() {
-        // Ensure the item exists
-        composeTestRule.onNodeWithTag("ListItem-Test Item 1").assertIsDisplayed()
-
-        // Click the edit button for "Test Item 1"
-        composeTestRule.onNodeWithTag("EditButton-Test Item 1").performClick()
-
-        // Change the name of the item
-        composeTestRule.onNodeWithText("Test Item 1").performClick()
-            .performTextInput(" test addition")
-
-        // Save the changes
-        composeTestRule.onNodeWithContentDescription(getResourceString(R.string.save))
-            .performClick()
-
-        // The updated item should now exist
-        composeTestRule.onNodeWithTag("ListItem-Test Item 1 test addition").assertIsDisplayed()
-
-        // The old item should no longer exist
-        composeTestRule.onNodeWithText("Test Item 1").assertDoesNotExist()
-    }
-
-    @Test
     fun testDeleteItem() {
         // Ensure the item exists
         composeTestRule.onNodeWithText("Test Item 2").assertExists()

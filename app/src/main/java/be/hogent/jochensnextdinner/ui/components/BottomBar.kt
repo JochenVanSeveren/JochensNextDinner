@@ -16,6 +16,12 @@ import androidx.navigation.NavHostController
 import be.hogent.jochensnextdinner.utils.IconResource
 import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 
+/**
+ * Composable function for creating a bottom navigation bar.
+ *
+ * @param navController The NavController for navigating between screens.
+ * @param screens The list of screens to display in the bottom bar. By default, it includes all screens that have the inBottomBar property set to true.
+ */
 @Composable
 fun BottomBar(
     navController: NavHostController,
@@ -58,4 +64,3 @@ fun BottomBar(
         }
     }
 }
-

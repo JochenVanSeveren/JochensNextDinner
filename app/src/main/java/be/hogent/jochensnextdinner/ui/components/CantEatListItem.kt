@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import be.hogent.jochensnextdinner.R
@@ -43,6 +44,7 @@ fun CantEatListItem(
     }
 
     ListItem(
+        modifier = Modifier.testTag("ListItem-${cantEat.name}"),
         headlineContent = {
             if (isEditing.value) {
                 TextField(
@@ -50,10 +52,14 @@ fun CantEatListItem(
                     onValueChange = { name.value = it },
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.focusRequester(focusRequester)
+                    modifier = Modifier.focusRequester(focusRequester),
+                    isError = name.value.isEmpty(),
                 )
             } else {
-                Text(text = name.value, fontWeight = FontWeight.Bold)
+                Text(
+                    text = name.value,
+                    fontWeight = FontWeight.Bold
+                )
             }
         },
         colors = ListItemDefaults.colors(
@@ -96,9 +102,12 @@ fun CantEatListItem(
                     }
                 }
             } else {
-                IconButton(onClick = {
-                    isEditing.value = true
-                }) {
+                IconButton(
+                    onClick = {
+                        isEditing.value = true
+                    },
+                    modifier = Modifier.testTag("EditButton-${cantEat.name}")
+                ) {
                     Icon(
                         Icons.Filled.Edit,
                         contentDescription = stringResource(id = R.string.edit)

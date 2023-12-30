@@ -31,7 +31,11 @@ fun BottomBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             screens.forEach { screen ->
-                IconButton(onClick = { navController.navigate(screen.name) }) {
+                IconButton(onClick = {
+                    navController.navigate(screen.name) {
+                        launchSingleTop = true
+                    }
+                }) {
                     when (val icon = screen.icon) {
                         is IconResource.Vector -> {
                             Icon(
@@ -40,6 +44,7 @@ fun BottomBar(
                                 tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
+
                         is IconResource.Drawable -> {
                             Icon(
                                 painter = painterResource(id = icon.resId),

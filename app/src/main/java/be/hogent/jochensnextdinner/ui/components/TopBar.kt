@@ -22,6 +22,7 @@ import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 @Composable
 fun TopBar(
     navController: NavHostController,
+    showGoBackButton: Boolean = true
 ) {
     val canGoBack = navController.previousBackStackEntry != null
 
@@ -46,7 +47,7 @@ fun TopBar(
         ),
         title = { Text(title, fontWeight = FontWeight.Bold) },
         navigationIcon = {
-            if (canGoBack) {
+            if (canGoBack && showGoBackButton) {
                 IconButton(onClick = { navController.navigateUp() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,

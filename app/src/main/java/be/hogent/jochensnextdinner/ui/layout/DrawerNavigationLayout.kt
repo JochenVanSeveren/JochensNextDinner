@@ -44,7 +44,7 @@ fun DrawerNavigationLayout(
             }
         }) {
         Scaffold(
-            topBar = { TopBar(navController = navController) },
+            topBar = { TopBar(navController = navController, showGoBackButton = false) },
         ) { innerPadding ->
             Surface(
                 modifier = Modifier.padding(innerPadding),

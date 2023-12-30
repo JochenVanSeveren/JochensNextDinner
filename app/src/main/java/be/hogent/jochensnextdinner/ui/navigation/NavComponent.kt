@@ -33,9 +33,21 @@ fun NavComponent(
     ) {
         composable(route = JochensNextDinnerScreen.Start.name) {
             StartScreen(
-                onCantEatClick = { navController.navigate(JochensNextDinnerScreen.CantEatScreen.name) },
-                onLikeClick = { navController.navigate(JochensNextDinnerScreen.LikeScreen.name) },
-                onRecipeClick = { navController.navigate(JochensNextDinnerScreen.RecipeScreen.name) }
+                onCantEatClick = {
+                    navController.navigate(JochensNextDinnerScreen.CantEatScreen.name) {
+                        launchSingleTop = true
+                    }
+                },
+                onLikeClick = {
+                    navController.navigate(JochensNextDinnerScreen.LikeScreen.name) {
+                        launchSingleTop = true
+                    }
+                },
+                onRecipeClick = {
+                    navController.navigate(JochensNextDinnerScreen.RecipeScreen.name) {
+                        launchSingleTop = true
+                    }
+                }
             )
         }
         composable(route = JochensNextDinnerScreen.CantEatScreen.name) {
@@ -60,7 +72,9 @@ fun NavComponent(
                 )
             } else {
                 RecipesScreen(onRecipeClick = { localId, title ->
-                    navController.navigate("RecipeDetailScreen/${localId}?title=${title}")
+                    navController.navigate("RecipeDetailScreen/${localId}?title=${title}") {
+                        launchSingleTop = true
+                    }
                 })
             }
         }

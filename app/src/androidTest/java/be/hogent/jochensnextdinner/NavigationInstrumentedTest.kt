@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import be.hogent.jochensnextdinner.ui.JochensNextDinnerApp
+import be.hogent.jochensnextdinner.utils.JndNavigationType
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -30,7 +31,7 @@ class NavigationTest {
     fun setup() {
         composeTestRule.setContent {
             navController = rememberNavController()
-            JochensNextDinnerApp(navController)
+            JochensNextDinnerApp(navController, navigationType = JndNavigationType.BOTTOM_NAVIGATION)
         }
     }
 

@@ -31,7 +31,11 @@ android {
         buildConfigField("String", "API_KEY", keyProperties["API_KEY"] as String)
         buildConfigField("String", "BASE_URL", keyProperties["BASE_URL"] as String)
         buildConfigField("String", "AUTHOR_ID", keyProperties["AUTHOR_ID"] as String)
-        buildConfigField("String", "CLOUDINARY_BASE_URL", keyProperties["CLOUDINARY_BASE_URL"] as String)
+        buildConfigField(
+            "String",
+            "CLOUDINARY_BASE_URL",
+            keyProperties["CLOUDINARY_BASE_URL"] as String
+        )
     }
     buildFeatures {
         buildConfig = true
@@ -122,14 +126,14 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.5.0")
 
-    // TODO: BUG
-    testImplementation("org.mockito:mockito-core:3.12.4")
+    // Strawberry Mockito
+    testImplementation("org.mockito:mockito-core:4.0.0")
     testImplementation("org.mockito:mockito-inline:3.12.4")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 
     // Adaptive layout
 //    implementation("androidx.compose.material3:material3-adaptive")
     implementation("androidx.compose.material3:material3-adaptive-android:1.0.0-alpha03")
-
 
 
 }

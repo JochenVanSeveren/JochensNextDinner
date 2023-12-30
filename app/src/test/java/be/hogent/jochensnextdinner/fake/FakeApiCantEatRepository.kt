@@ -10,7 +10,7 @@ class FakeCantEatRepository : CantEatRepository {
 
     override fun getCantEats(): Flow<List<CantEat>> {
         return flow {
-            emit(cantEats)
+            emit(listOf(CantEat(name = "test")))
         }
     }
 

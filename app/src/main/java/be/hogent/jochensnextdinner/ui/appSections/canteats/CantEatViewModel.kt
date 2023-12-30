@@ -12,6 +12,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import be.hogent.jochensnextdinner.JndApplication
 import be.hogent.jochensnextdinner.data.CantEatRepository
 import be.hogent.jochensnextdinner.model.CantEat
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -19,7 +21,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewModel() {
+class CantEatViewModel(
+    private val cantEatRepository: CantEatRepository
+) : ViewModel() {
     lateinit var uiListState: StateFlow<CantEatListState>
 
     var cantEatApiState: CantEatApiState by mutableStateOf(CantEatApiState.Loading)
@@ -50,7 +54,7 @@ class CantEatViewModel(private val cantEatRepository: CantEatRepository) : ViewM
                 cantEatApiState = CantEatApiState.Error(errorMessage)
                 return
             }
-            viewModelScope.launch {
+            viewModelScope.launch() {
                 cantEatRepository.saveCantEat(cantEat)
                 getCantEatsFromRepo()
             }

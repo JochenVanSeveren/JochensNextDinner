@@ -30,7 +30,6 @@ interface CantEatRepository {
 class CachingCantEatRepository(
     private val cantEatDao: CantEatDao,
     private val cantEatApiService: CantEatApiService,
-//    context: Context
 ) : CantEatRepository {
 
     override fun getCantEats(): Flow<List<CantEat>> {

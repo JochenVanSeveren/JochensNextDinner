@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import be.hogent.jochensnextdinner.utils.IconResource
 import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 
 @Composable
@@ -31,18 +32,21 @@ fun BottomBar(
         ) {
             screens.forEach { screen ->
                 IconButton(onClick = { navController.navigate(screen.name) }) {
-                    if (screen.vectorIcon != null) {
-                        Icon(
-                            imageVector = screen.vectorIcon,
-                            contentDescription = stringResource(id = screen.label),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    } else if (screen.iconResource != null) {
-                        Icon(
-                            painter = painterResource(id = screen.iconResource),
-                            contentDescription = stringResource(id = screen.label),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
+                    when (val icon = screen.icon) {
+                        is IconResource.Vector -> {
+                            Icon(
+                                imageVector = icon.vector,
+                                contentDescription = stringResource(id = screen.label),
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                        is IconResource.Drawable -> {
+                            Icon(
+                                painter = painterResource(id = icon.resId),
+                                contentDescription = stringResource(id = screen.label),
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     }
                 }
             }

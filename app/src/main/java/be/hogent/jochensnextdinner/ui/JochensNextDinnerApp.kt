@@ -23,6 +23,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import be.hogent.jochensnextdinner.ui.components.TopBar
 import be.hogent.jochensnextdinner.ui.layout.BottomNavigationLayout
+import be.hogent.jochensnextdinner.ui.layout.DrawerNavigationLayout
 import be.hogent.jochensnextdinner.ui.navigation.NavComponent
 import be.hogent.jochensnextdinner.ui.theme.JochensNextDinnerTheme
 import be.hogent.jochensnextdinner.utils.JndNavigationType
@@ -52,45 +53,6 @@ fun JochensNextDinnerApp(
     }
 
 
-}
-
-@Composable
-fun DrawerNavigationLayout(navController: NavHostController) {
-    Scaffold(
-        topBar = { TopBar(navController = navController) },
-//        drawerContent = { DrawerContent(navController) }
-    ) { innerPadding ->
-        Surface(
-            modifier = Modifier.padding(innerPadding),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            NavComponent(navController = navController, modifier = Modifier.padding(16.dp))
-        }
-    }
-}
-
-@Composable
-fun DrawerContent(navController: NavHostController) {
-    // Implementation for each item in the drawer
-    Column {
-        DrawerItem(
-            "Start",
-            Icons.Default.Home
-        ) { navController.navigate(JochensNextDinnerScreen.Start.name) }
-        DrawerItem(
-            "Can't Eat",
-            Icons.Default.Home
-        ) { navController.navigate(JochensNextDinnerScreen.CantEatScreen.name) }
-        DrawerItem(
-            "Likes",
-            Icons.Default.Home
-        ) { navController.navigate(JochensNextDinnerScreen.LikeScreen.name) }
-        DrawerItem(
-            "Recipes",
-            Icons.Default.Home
-        ) { navController.navigate(JochensNextDinnerScreen.RecipeScreen.name) }
-        // Add other drawer items here
-    }
 }
 
 @Composable

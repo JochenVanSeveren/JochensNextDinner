@@ -127,9 +127,14 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.5.0")
 
     // Strawberry Mockito
-    testImplementation("org.mockito:mockito-core:4.0.0")
-    testImplementation("org.mockito:mockito-inline:3.12.4")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+//    testImplementation("org.mockito:mockito-core:4.0.0")
+//    testImplementation("org.mockito:mockito-inline:3.12.4")
+//    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+
+    // Mockk
+    testImplementation("io.mockk:mockk-android:1.13.8")
+    testImplementation("io.mockk:mockk-agent:1.13.8")
+    testImplementation("androidx.test:runner:1.5.2")
 
     // Adaptive layout
 //    implementation("androidx.compose.material3:material3-adaptive")

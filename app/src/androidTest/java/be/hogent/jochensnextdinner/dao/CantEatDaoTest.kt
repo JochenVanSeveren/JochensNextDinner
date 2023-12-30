@@ -1,4 +1,4 @@
-package be.hogent.jochensnextdinner
+package be.hogent.jochensnextdinner.dao
 
 import android.content.Context
 import androidx.room.Room

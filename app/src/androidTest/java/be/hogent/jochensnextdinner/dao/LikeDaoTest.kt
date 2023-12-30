@@ -1,4 +1,4 @@
-package be.hogent.jochensnextdinner
+package be.hogent.jochensnextdinner.dao
 
 import Like
 import android.content.Context

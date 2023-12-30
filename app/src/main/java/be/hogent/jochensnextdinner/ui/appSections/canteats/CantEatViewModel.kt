@@ -12,8 +12,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import be.hogent.jochensnextdinner.JndApplication
 import be.hogent.jochensnextdinner.data.CantEatRepository
 import be.hogent.jochensnextdinner.model.CantEat
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map

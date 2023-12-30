@@ -1,6 +1,7 @@
 package be.hogent.jochensnextdinner.data
 
 import Like
+import android.util.Log
 import be.hogent.jochensnextdinner.data.database.LikeDao
 import be.hogent.jochensnextdinner.data.database.asDomainLikes
 import be.hogent.jochensnextdinner.network.LikeApiService
@@ -100,7 +101,7 @@ class CachingLikeRepository(
                 }
             }
         } catch (e: SocketTimeoutException) {
-            // log something
+            Log.e("SocketTimeoutException", e.message ?: "No message")
         }
     }
 }

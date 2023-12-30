@@ -38,7 +38,7 @@ class CantEatViewModel(
                 cantEatRepository.refresh()
                 cantEatApiState = CantEatApiState.Success
             } catch (e: Exception) {
-                cantEatApiState = CantEatApiState.Error(e.localizedMessage ?: "Unknown error")
+                cantEatApiState = CantEatApiState.Error(e.message ?: "Unknown error")
             }
         }
     }
@@ -57,7 +57,7 @@ class CantEatViewModel(
                 getCantEatsFromRepo()
             }
             cantEatApiState = CantEatApiState.Success
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             cantEatApiState = CantEatApiState.Error(e.message ?: "Unknown error")
         }
     }
@@ -69,7 +69,7 @@ class CantEatViewModel(
                 cantEatRepository.deleteCantEat(cantEat)
             }
             cantEatApiState = CantEatApiState.Success
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             cantEatApiState = CantEatApiState.Error(e.message ?: "Unknown error")
         }
     }
@@ -92,7 +92,7 @@ class CantEatViewModel(
                     initialValue = CantEatListState(),
                 )
             cantEatApiState = CantEatApiState.Success
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             cantEatApiState = CantEatApiState.Error(e.message ?: "Unknown error")
         }
     }

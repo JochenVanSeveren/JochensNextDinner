@@ -2,6 +2,7 @@ package be.hogent.jochensnextdinner
 
 import be.hogent.jochensnextdinner.data.CantEatRepository
 import be.hogent.jochensnextdinner.model.CantEat
+import be.hogent.jochensnextdinner.ui.appSections.canteats.CantEatApiState
 import be.hogent.jochensnextdinner.ui.appSections.canteats.CantEatViewModel
 import io.mockk.Runs
 import io.mockk.clearAllMocks
@@ -9,6 +10,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
+import junit.framework.TestCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -39,6 +41,26 @@ class CantEatViewModelTest {
     fun tearDown() {
         Dispatchers.resetMain()
         clearAllMocks()
+    }
+
+    @Test
+    fun `loadCantEats() should call repository getCantEats`() = runTest {
+        viewModel.refresh()
+        advanceUntilIdle()
+
+        coVerify { cantEatRepository.getCantEats() }
+    }
+
+    @Test
+    fun `loadCantEats() should return error state on repository failure`() = runTest {
+        val errorMessage = "Error fetching cant eats"
+        coEvery { cantEatRepository.refresh() } throws Exception(errorMessage)
+
+        viewModel.refresh()
+        advanceUntilIdle()
+
+        val state = viewModel.cantEatApiState
+        TestCase.assertTrue(state is CantEatApiState.Error && state.message == errorMessage)
     }
 
     @Test
@@ -73,18 +95,3 @@ class CantEatViewModelTest {
         coVerify { cantEatRepository.refresh() }
     }
 }
-
-
-//class TestDispatcherRule @OptIn(ExperimentalCoroutinesApi::class) constructor(
-//    private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher(),
-//) : TestWatcher() {
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    override fun starting(description: Description) {
-//        Dispatchers.setMain(testDispatcher)
-//    }
-//
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    override fun finished(description: Description) {
-//        Dispatchers.resetMain()
-//    }
-//}

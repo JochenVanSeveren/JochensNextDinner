@@ -35,7 +35,7 @@ class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
                 likeRepository.refresh()
                 likeApiState = LikeApiState.Success
             } catch (e: Exception) {
-                likeApiState = LikeApiState.Error(e.localizedMessage ?: "Unknown error")
+                likeApiState = LikeApiState.Error(e.message ?: "Unknown error")
             }
         }
     }
@@ -50,7 +50,7 @@ class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
                     initialValue = LikeListState(),
                 )
             likeApiState = LikeApiState.Success
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             likeApiState = LikeApiState.Error(e.message ?: "Unknown error")
         }
     }

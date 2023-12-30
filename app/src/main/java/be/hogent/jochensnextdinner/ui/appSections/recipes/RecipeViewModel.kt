@@ -35,7 +35,7 @@ class RecipeViewModel(private val recipeRepository: RecipeRepository) : ViewMode
                 recipeRepository.refresh()
                 recipeApiState = RecipeApiState.Success
             } catch (e: Exception) {
-                recipeApiState = RecipeApiState.Error(e.localizedMessage ?: "Unknown error")
+                recipeApiState = RecipeApiState.Error(e.message ?: "Unknown error")
             }
         }
     }
@@ -50,7 +50,7 @@ class RecipeViewModel(private val recipeRepository: RecipeRepository) : ViewMode
                     initialValue = RecipeListState(),
                 )
             recipeApiState = RecipeApiState.Success
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             recipeApiState = RecipeApiState.Error(e.message ?: "Unknown error")
         }
     }

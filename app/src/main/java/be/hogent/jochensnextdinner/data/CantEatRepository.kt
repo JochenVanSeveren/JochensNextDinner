@@ -1,5 +1,6 @@
 package be.hogent.jochensnextdinner.data
 
+import android.util.Log
 import be.hogent.jochensnextdinner.data.database.CantEatDao
 import be.hogent.jochensnextdinner.data.database.asDomainCantEats
 import be.hogent.jochensnextdinner.model.CantEat
@@ -90,14 +91,6 @@ class CachingCantEatRepository(
      * @throws SocketTimeoutException If a timeout occurs while fetching data from the remote API.
      */
     override suspend fun refresh() {
-        //        val constraints =
-//            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
-//                .build()
-//        val requestBuilder = OneTimeWorkRequestBuilder<WifiNotificationWorker>()
-//        val request = requestBuilder.setConstraints(constraints).build()
-//        workManager.enqueue(request)
-//        workID = request.id
-//        wifiWorkInfo = workManager.getWorkInfoByIdFlow(request.id)
         try {
             // Fetch all items from the API
             val dbCantEats = cantEatDao.getAllItems().first().asDomainCantEats()
@@ -120,7 +113,7 @@ class CachingCantEatRepository(
                 }
             }
         } catch (e: SocketTimeoutException) {
-            // log something
+            Log.e("SocketTimeoutException", e.message ?: "No message")
         }
     }
 }

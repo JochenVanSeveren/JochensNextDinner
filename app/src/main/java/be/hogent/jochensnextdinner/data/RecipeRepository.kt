@@ -1,5 +1,6 @@
 package be.hogent.jochensnextdinner.data
 
+import android.util.Log
 import be.hogent.jochensnextdinner.data.database.RecipeDao
 import be.hogent.jochensnextdinner.data.database.asDomainObject
 import be.hogent.jochensnextdinner.data.database.asDomainRecipes
@@ -110,7 +111,7 @@ class CachingRecipeRepository(
                 }
             }
         } catch (e: SocketTimeoutException) {
-            // log something
+            Log.e("SocketTimeoutException", e.message ?: "No message")
         }
     }
 }

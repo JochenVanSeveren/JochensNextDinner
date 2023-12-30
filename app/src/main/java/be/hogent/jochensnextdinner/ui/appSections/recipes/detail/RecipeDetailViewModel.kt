@@ -30,7 +30,7 @@ class RecipeDetailViewModel(private val recipeRepository: RecipeRepository) : Vi
             _recipe.value = recipe
             recipeApiState = RecipeApiState.Success
         } catch (e: Exception) {
-            recipeApiState = RecipeApiState.Error(e.localizedMessage ?: "Unknown error")
+            recipeApiState = RecipeApiState.Error(e.message ?: "Unknown error")
         }
     }
 

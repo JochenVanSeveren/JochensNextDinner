@@ -1,6 +1,8 @@
 package be.hogent.jochensnextdinner.ui
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,10 +17,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,24 +29,18 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import be.hogent.jochensnextdinner.R
 import be.hogent.jochensnextdinner.ui.theme.JochensNextDinnerTheme
+import be.hogent.jochensnextdinner.utils.IconResource
+import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 
-/**
- * Composable function for the StartScreen.
- * It displays clickable text and three IconTextRow items.
- *
- * @param onCantEatClick The function to be invoked when the CantEat IconTextRow is clicked.
- * @param onLikeClick The function to be invoked when the Like IconTextRow is clicked.
- * @param onRecipeClick The function to be invoked when the Recipe IconTextRow is clicked.
- */
 @Composable
 fun StartScreen(
-    onCantEatClick: () -> Unit,
-    onLikeClick: () -> Unit,
-    onRecipeClick: () -> Unit,
+    screens: List<JochensNextDinnerScreen> = JochensNextDinnerScreen.values().toList()
+        .filter { it.inBottomBar },
+    onScreenClick: (JochensNextDinnerScreen) -> Unit,
 ) {
     val context = LocalContext.current
+    val orientation = context.resources.configuration.orientation
 
     Column {
         val annotatedText = buildAnnotatedString {
@@ -70,7 +62,6 @@ fun StartScreen(
             )
         }
 
-        // ClickableText with an annotated string. When the annotated part is clicked, it opens the URL in a browser.
         ClickableText(
             text = annotatedText,
             onClick = { offset ->
@@ -87,41 +78,46 @@ fun StartScreen(
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
         )
 
-        // IconTextRow for the CantEat item. When clicked, it invokes the onCantEatClick function.
-        IconTextRow(
-            onClick = onCantEatClick,
-            iconId = R.drawable.skull,
-            contentDescription = "CantEat",
-            text = "Wat mag je niet eten?"
-        )
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            screens.forEach { screen ->
+                createIconTextRow(screen, context, onScreenClick, orientation)
+            }
+        } else {
+            Row {
+                screens.forEach { screen ->
+                    createIconTextRow(screen, context, onScreenClick, orientation)
+                }
+            }
+        }
+    }
+}
 
-        // IconTextRow for the Like item. When clicked, it invokes the onLikeClick function.
-        IconTextRow(
-            onClick = onLikeClick,
-            iconId = R.drawable.thumb_up,
-            contentDescription = "Like",
-            text = "Wat mag je dan wel eten?"
-        )
+@Composable
+fun createIconTextRow(
+    screen: JochensNextDinnerScreen,
+    context: Context,
+    onScreenClick: (JochensNextDinnerScreen) -> Unit,
+    orientation: Int
+) {
+    val text = if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+        context.getString(screen.description)
+    } else {
+        context.getString(screen.label)
+    }
 
-        // IconTextRow for the Recipe item. When clicked, it invokes the onRecipeClick function.
+    when (val icon = screen.icon) {
+        is IconResource.Drawable -> icon.resId
+        else -> null
+    }?.let {
         IconTextRow(
-            onClick = onRecipeClick,
-            iconId = R.drawable.skillet,
-            contentDescription = "Recipe",
-            text = "Wat maak jij dan zoal?"
+            onClick = { onScreenClick(screen) },
+            iconId = it,
+            contentDescription = context.getString(screen.label),
+            text = text
         )
     }
 }
 
-/**
- * Composable function for displaying a row with an icon and text.
- * The row is clickable and invokes the provided onClick function when clicked.
- *
- * @param onClick The function to be invoked when the row is clicked.
- * @param iconId The resource ID of the icon to display.
- * @param contentDescription The content description for the icon.
- * @param text The text to display.
- */
 @Composable
 fun IconTextRow(
     onClick: () -> Unit,
@@ -131,7 +127,7 @@ fun IconTextRow(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 24.dp),
+        modifier = Modifier.padding(vertical = 12.dp), // Reduced padding
     ) {
 
         IconButton(
@@ -147,7 +143,7 @@ fun IconTextRow(
                 )
             }
         )
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(8.dp)) // Reduced width
         Text(
             text = text,
             style = MaterialTheme.typography.titleMedium,
@@ -157,15 +153,18 @@ fun IconTextRow(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun StartScreenPreview() {
     JochensNextDinnerTheme {
-        StartScreen(
-            onCantEatClick = {},
-            onLikeClick = {},
-            onRecipeClick = {}
-        )
+        StartScreen(onScreenClick = { })
+    }
+}
+
+@Preview(showBackground = true, widthDp = 640, heightDp = 360)
+@Composable
+fun StartScreenPreviewHorizontal() {
+    JochensNextDinnerTheme {
+        StartScreen(onScreenClick = { })
     }
 }

@@ -40,23 +40,11 @@ fun NavComponent(
         modifier = modifier,
     ) {
         composable(route = JochensNextDinnerScreen.Start.name) {
-            StartScreen(
-                onCantEatClick = {
-                    navController.navigate(JochensNextDinnerScreen.CantEatScreen.name) {
-                        launchSingleTop = true
-                    }
-                },
-                onLikeClick = {
-                    navController.navigate(JochensNextDinnerScreen.LikeScreen.name) {
-                        launchSingleTop = true
-                    }
-                },
-                onRecipeClick = {
-                    navController.navigate(JochensNextDinnerScreen.RecipeScreen.name) {
-                        launchSingleTop = true
-                    }
+            StartScreen(onScreenClick = { screen ->
+                navController.navigate(screen.name) {
+                    launchSingleTop = true
                 }
-            )
+            })
         }
         composable(route = JochensNextDinnerScreen.CantEatScreen.name) {
             CantEatScreen()

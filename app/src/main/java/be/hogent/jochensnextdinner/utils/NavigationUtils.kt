@@ -35,12 +35,31 @@ sealed class IconResource {
 enum class JochensNextDinnerScreen(
     val icon: IconResource,
     val label: Int,
-    val inBottomBar: Boolean
+    val inBottomBar: Boolean,
+    val description: Int
 ) {
-    Start(IconResource.Vector(Icons.Filled.Home), R.string.home_nav_name, false),
-    CantEatScreen(IconResource.Drawable(R.drawable.skull), R.string.cant_eat_screen, true),
-    LikeScreen(IconResource.Drawable(R.drawable.thumb_up), R.string.like_screen, true),
-    RecipeScreen(IconResource.Drawable(R.drawable.skillet), R.string.recipe_screen, true),
+    Start(
+        IconResource.Vector(Icons.Filled.Home), R.string.home_nav_name, false,
+        R.string.start
+    ),
+    CantEatScreen(
+        IconResource.Drawable(R.drawable.skull),
+        R.string.cant_eat_screen,
+        true,
+        R.string.wat_mag_je_niet_eten
+    ),
+    LikeScreen(
+        IconResource.Drawable(R.drawable.thumb_up),
+        R.string.like_screen,
+        true,
+        R.string.wat_mag_je_dan_wel_eten
+    ),
+    RecipeScreen(
+        IconResource.Drawable(R.drawable.skillet),
+        R.string.recipe_screen,
+        true,
+        R.string.wat_maak_jij_dan_zoal
+    ),
 }
 
 /**

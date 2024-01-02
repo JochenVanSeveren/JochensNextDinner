@@ -31,6 +31,7 @@ sealed class IconResource {
  * @property icon The icon resource for the screen.
  * @property label The resource ID of the label for the screen.
  * @property inBottomBar A flag indicating whether the screen is included in the bottom navigation bar.
+ * @property description The resource ID of the description for the screen.
  */
 enum class JochensNextDinnerScreen(
     val icon: IconResource,

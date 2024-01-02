@@ -44,7 +44,7 @@ fun NavComponent(
                 navController.navigate(screen.name) {
                     launchSingleTop = true
                 }
-            })
+            }, navigationType = navigationType)
         }
         composable(route = JochensNextDinnerScreen.CantEatScreen.name) {
             CantEatScreen()

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,13 +32,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import be.hogent.jochensnextdinner.ui.theme.JochensNextDinnerTheme
 import be.hogent.jochensnextdinner.utils.IconResource
+import be.hogent.jochensnextdinner.utils.JndNavigationType
 import be.hogent.jochensnextdinner.utils.JochensNextDinnerScreen
 
+
+/**
+ * Composable function for the StartScreen.
+ * It displays clickable text and a list of IconTextRow items.
+ * The items are displayed in a column in portrait mode and in a row in landscape mode.
+ * The text for each item is determined based on the orientation and the navigation type.
+ * If the orientation is portrait or the navigation type is PERMANENT_NAVIGATION_DRAWER, the long description is shown.
+ * Otherwise, the label is shown.
+ *
+ * @param screens The list of screens to display. By default, it includes all screens that have the inBottomBar property set to true.
+ * @param onScreenClick The function to be invoked when a screen is clicked.
+ * @param navigationType The type of navigation to use (e.g., bottom navigation, drawer navigation).
+ */
 @Composable
 fun StartScreen(
     screens: List<JochensNextDinnerScreen> = JochensNextDinnerScreen.values().toList()
         .filter { it.inBottomBar },
     onScreenClick: (JochensNextDinnerScreen) -> Unit,
+    navigationType: JndNavigationType
 ) {
     val context = LocalContext.current
     val orientation = context.resources.configuration.orientation
@@ -78,28 +94,40 @@ fun StartScreen(
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
         )
 
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (orientation == Configuration.ORIENTATION_PORTRAIT || navigationType == JndNavigationType.PERMANENT_NAVIGATION_DRAWER) {
             screens.forEach { screen ->
-                createIconTextRow(screen, context, onScreenClick, orientation)
+                createIconTextRow(screen, context, onScreenClick, showLongDescription = true)
             }
         } else {
-            Row {
+            Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 screens.forEach { screen ->
-                    createIconTextRow(screen, context, onScreenClick, orientation)
+                    createIconTextRow(screen, context, onScreenClick, showLongDescription = false)
                 }
             }
         }
     }
 }
 
+/**
+ * Composable function for creating an IconTextRow.
+ * It creates an IconTextRow for a given screen.
+ * The text for the IconTextRow is determined based on the showLongDescription parameter.
+ * If showLongDescription is true, the long description is shown.
+ * Otherwise, the label is shown.
+ *
+ * @param screen The screen for which to create the IconTextRow.
+ * @param context The local context.
+ * @param onScreenClick The function to be invoked when the screen is clicked.
+ * @param showLongDescription A flag indicating whether to show the long description or the label.
+ */
 @Composable
 fun createIconTextRow(
     screen: JochensNextDinnerScreen,
     context: Context,
     onScreenClick: (JochensNextDinnerScreen) -> Unit,
-    orientation: Int
+    showLongDescription : Boolean
 ) {
-    val text = if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+    val text = if (showLongDescription) {
         context.getString(screen.description)
     } else {
         context.getString(screen.label)
@@ -118,6 +146,15 @@ fun createIconTextRow(
     }
 }
 
+/**
+ * Composable function for creating an IconTextRow.
+ * It creates an IconTextRow for a given screen.
+ *
+ * @param onClick The function to be invoked when the screen is clicked.
+ * @param iconId The resource ID of the icon.
+ * @param contentDescription The content description of the icon.
+ * @param text The text to display.
+ */
 @Composable
 fun IconTextRow(
     onClick: () -> Unit,
@@ -127,7 +164,8 @@ fun IconTextRow(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 12.dp), // Reduced padding
+        modifier = Modifier
+            .padding(vertical = 12.dp).width(300.dp)
     ) {
 
         IconButton(
@@ -157,7 +195,7 @@ fun IconTextRow(
 @Composable
 fun StartScreenPreview() {
     JochensNextDinnerTheme {
-        StartScreen(onScreenClick = { })
+        StartScreen(onScreenClick = { }, navigationType = JndNavigationType.BOTTOM_NAVIGATION)
     }
 }
 
@@ -165,6 +203,20 @@ fun StartScreenPreview() {
 @Composable
 fun StartScreenPreviewHorizontal() {
     JochensNextDinnerTheme {
-        StartScreen(onScreenClick = { })
+        StartScreen(
+            onScreenClick = { },
+            navigationType = JndNavigationType.BOTTOM_NAVIGATION
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 900, heightDp = 500)
+@Composable
+fun StartScreenPreviewHorizontalBigScreen() {
+    JochensNextDinnerTheme {
+        StartScreen(
+            onScreenClick = { },
+            navigationType = JndNavigationType.PERMANENT_NAVIGATION_DRAWER
+        )
     }
 }

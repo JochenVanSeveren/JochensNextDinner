@@ -3,6 +3,7 @@ package be.hogent.jochensnextdinner
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
@@ -40,7 +41,7 @@ class NavigationTest {
 
     @Test
     fun navigateToCantEatScreen() {
-        composeTestRule.onNodeWithContentDescription(getResourceString(R.string.cant_eat_screen))
+        composeTestRule.onNodeWithTag(getResourceString(R.string.cant_eat_screen)+ "NavIcon")
             .performClick()
         composeTestRule.onNodeWithText(getResourceString(R.string.cant_eat_screen))
             .assertIsDisplayed()
@@ -48,7 +49,7 @@ class NavigationTest {
 
     @Test
     fun navigateToLikeScreen() {
-        composeTestRule.onNodeWithContentDescription(getResourceString(R.string.like_screen))
+        composeTestRule.onNodeWithTag(getResourceString(R.string.like_screen)+ "NavIcon")
             .performClick()
         composeTestRule.onNodeWithText(getResourceString(R.string.like_screen))
             .assertIsDisplayed()
@@ -56,7 +57,7 @@ class NavigationTest {
 
     @Test
     fun navigateToRecipeScreen() {
-        composeTestRule.onNodeWithContentDescription(getResourceString(R.string.recipe_screen))
+        composeTestRule.onNodeWithTag(getResourceString(R.string.recipe_screen)+ "NavIcon")
             .performClick()
         composeTestRule.onNodeWithText(getResourceString(R.string.recipe_screen))
             .assertIsDisplayed()
@@ -64,7 +65,7 @@ class NavigationTest {
 
     @Test
     fun navigateBackToStartScreen() {
-        composeTestRule.onNodeWithContentDescription(getResourceString(R.string.cant_eat_screen))
+        composeTestRule.onNodeWithTag(getResourceString(R.string.cant_eat_screen)+ "NavIcon")
             .performClick()
         composeTestRule.onNodeWithContentDescription(getResourceString(R.string.navigate_up))
             .performClick()

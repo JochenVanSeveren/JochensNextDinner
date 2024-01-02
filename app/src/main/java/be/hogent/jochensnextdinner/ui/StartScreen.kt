@@ -22,7 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -141,7 +143,8 @@ fun createIconTextRow(
             onClick = { onScreenClick(screen) },
             iconId = it,
             contentDescription = context.getString(screen.label),
-            text = text
+            text = text,
+            testTag = context.getString(screen.label) + "NavIcon"
         )
     }
 }
@@ -154,24 +157,28 @@ fun createIconTextRow(
  * @param iconId The resource ID of the icon.
  * @param contentDescription The content description of the icon.
  * @param text The text to display.
+ * @param testTag The test tag for the IconTextRow.
  */
 @Composable
 fun IconTextRow(
     onClick: () -> Unit,
     iconId: Int,
     contentDescription: String,
-    text: String
+    text: String,
+    testTag: String
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .padding(vertical = 12.dp).width(300.dp)
+            .padding(vertical = 12.dp)
+            .width(300.dp)
     ) {
 
         IconButton(
             modifier = Modifier
                 .clip(RoundedCornerShape(15.dp, 15.dp, 24.dp, 0.dp))
-                .background(MaterialTheme.colorScheme.primary),
+                .background(MaterialTheme.colorScheme.primary)
+                .testTag(testTag),
             onClick = onClick,
             content = {
                 Icon(
@@ -181,7 +188,7 @@ fun IconTextRow(
                 )
             }
         )
-        Spacer(modifier = Modifier.width(8.dp)) // Reduced width
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = text,
             style = MaterialTheme.typography.titleMedium,

@@ -1,6 +1,5 @@
 package be.hogent.jochensnextdinner.ui.appSections.canteats
 
-import androidx.work.WorkInfo
 import be.hogent.jochensnextdinner.model.CantEat
 
 /**

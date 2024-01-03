@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import be.hogent.jochensnextdinner.data.database.JndDb.Companion.Instance
 
 /**
  * Represents the database for the application.

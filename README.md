@@ -11,5 +11,5 @@ AUTHOR_ID=
 CLOUDINARY_BASE_URL=
 ```
 
-Dokka documentation can be found [here](https://github.com/JochenVanSeveren/JochensNextDinner/tree/main/dokka/html).
+Dokka documentation can be found [here](https://jochenvanseveren.github.io/JochensNextDinner/).
 

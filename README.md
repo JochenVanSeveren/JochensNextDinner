@@ -2,7 +2,7 @@
 
 This is a school project where I learn to use the MVVM architecture pattern and Jetpack Compose.
 
-To run this project, you need to have these listed in your `local.properties` file:
+To run this project, you need to have these listed in your `secrets.properties` file in the root directory:
 
 ```properties
 API_KEY=

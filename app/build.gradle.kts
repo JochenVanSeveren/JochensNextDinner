@@ -9,7 +9,7 @@ plugins {
 
 }
 
-val keyPropertiesFile: File = rootProject.file("local.properties")
+val keyPropertiesFile: File = rootProject.file("secrets.properties")
 val keyProperties = Properties()
 keyProperties.load(keyPropertiesFile.inputStream())
 
